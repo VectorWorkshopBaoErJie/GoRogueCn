@@ -6,35 +6,34 @@ using JetBrains.Annotations;
 namespace GoRogue
 {
     /// <summary>
-    /// Static class containing extension helper methods for various built-in C# classes, as well as a
-    /// static helper method for "swapping" references.
+    /// 包含各种内置 C# 类的扩展帮助方法的静态类，以及一个用于"交换"引用的静态帮助方法。
     /// </summary>
     [PublicAPI]
     public static class Utility
     {
         /// <summary>
-        /// Adds an AsReadOnly method to <see cref="IDictionary{K, V}" />, similar to the AsReadOnly method of
-        /// <see cref="IList{T}" />, that returns a read-only reference to the dictionary.
+        /// 向<see cref="IDictionary{K, V}" />添加一个 AsReadOnly 方法，类似于<see cref="IList{T}" />的 AsReadOnly 方法，
+        /// 该方法返回一个对字典的只读引用。
         /// </summary>
-        /// <typeparam name="TKey">Type of keys of the dictionary.</typeparam>
-        /// <typeparam name="TValue">Type of values of the dictionary.</typeparam>
-        /// <param name="dictionary" />
-        /// <returns>A ReadOnlyDictionary instance for the specified dictionary.</returns>
+        /// <typeparam name="TKey">字典键的类型。</typeparam>
+        /// <typeparam name="TValue">字典值的类型。</typeparam>
+        /// <param name="dictionary">要操作的字典。</param>
+        /// <returns>为指定字典返回的ReadOnlyDictionary实例。</returns>
         public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(
             this IDictionary<TKey, TValue> dictionary)
             where TKey : notnull
             => new ReadOnlyDictionary<TKey, TValue>(dictionary);
 
         /// <summary>
-        /// "Multiplies", aka repeats, a string the given number of times.
+        /// 相乘是指字符串按照指定的次数重复。
         /// </summary>
-        /// <param name="str" />
-        /// <param name="numTimes">The number of times to repeat the string.</param>
-        /// <returns>The current string repeated <paramref name="numTimes" /> times.</returns>
+        /// <param name="str">要重复的字符串。</param>
+        /// <param name="numTimes">重复字符串的次数。</param>
+        /// <returns>当前字符串重复<paramref name="numTimes" />次的结果。</returns>
         public static string Multiply(this string str, int numTimes) => string.Concat(Enumerable.Repeat(str, numTimes));
 
         /// <summary>
-        /// Swaps the values pointed to by <paramref name="lhs" /> and <paramref name="rhs" />.
+        /// 交换 <paramref name="lhs" /> 和 <paramref name="rhs" />.
         /// </summary>
         /// <typeparam name="T" />
         /// <param name="lhs" />
@@ -45,23 +44,23 @@ namespace GoRogue
         }
 
         /// <summary>
-        /// Convenience function that yields the given item as a single-item IEnumerable.
+        /// 这是一个快捷函数，它将给定的项作为单个的项目 IEnumerable 生成。
         /// </summary>
         /// <typeparam name="T" />
         /// <param name="item" />
-        /// <returns>An IEnumerable containing only the item the function is called on.</returns>
+        /// <returns>一个仅包含该函数调用条目的 IEnumerable 。</returns>
         public static IEnumerable<T> Yield<T>(this T item)
         {
             yield return item;
         }
 
         /// <summary>
-        /// Takes multiple parameters and converts them to an IEnumerable.
+        /// 接收多个参数并将它们转换为 IEnumerable。
         /// </summary>
-        /// <typeparam name="T" />
-        /// <param name="values">Parameters (specified as multiple parameters to the function).</param>
+        /// <typeparam name="T">类型参数。</typeparam>
+        /// <param name="values">参数（作为函数的多个参数指定）。</param>
         /// <returns>
-        /// An IEnumerable of all of the given items, in the order they were given to the function.
+        /// 一个包含所有给定项的 IEnumerable，按它们传递给函数的顺序排列。
         /// </returns>
         public static IEnumerable<T> Yield<T>(params T[] values)
         {
@@ -70,11 +69,11 @@ namespace GoRogue
         }
 
         /// <summary>
-        /// Takes multiple enumerables of items, and flattens them into a single IEnumerable.
+        /// 接收多个可枚举的项目集合，并将它们扁平化为一个单一的 IEnumerable 。
         /// </summary>
-        /// <typeparam name="T" />
-        /// <param name="lists">Lists to "flatten".</param>
-        /// <returns>An IEnumerable containing the items of all the enumerables passed in.</returns>
+        /// <typeparam name="T">元素类型。</typeparam>
+        /// <param name="lists">要“扁平化”的列表。</param>
+        /// <returns>一个包含所有传入的可枚举集合中的项目的 IEnumerable 。</returns>
         public static IEnumerable<T> Flatten<T>(params IEnumerable<T>[] lists)
         {
             foreach (var list in lists)

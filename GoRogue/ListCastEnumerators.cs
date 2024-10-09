@@ -6,21 +6,20 @@ using SadRogue.Primitives;
 namespace GoRogue
 {
     /// <summary>
-    /// A custom enumerator that iterates over a List and casts its objects to the given type.
+    /// 一个自定义枚举器，它遍历一个列表并将其对象转换为给定的类型。
     ///
-    /// All objects _must_ be of the specified type, or the iterator will not function.
+    /// 所有对象_必须_是指定的类型，否则迭代器将无法正常工作。
     /// </summary>
     /// <remarks>
-    /// This type is a struct, and as such is much more efficient when used in a foreach loop than a function returning
-    /// IEnumerable&lt;T&gt; or using System.LINQ extensions such as Where.
+    /// 这个类型是一个结构体，因此在foreach循环中使用时，比返回IEnumerable<T>的函数或使用System.LINQ扩展（如Where）要高效得多。
     ///
-    /// Otherwise, it has basically the same characteristics that exposing a list as <see cref="IEnumerable{T}"/> would;
-    /// so if you need to expose items as some type like IEnumerable, and the items are internally stored as a list, this
-    /// can be a good option.  This type does implement IEnumerable, and as such can be used directly with functions that
-    /// require one (for example, System.LINQ).  However, this will have reduced performance due to boxing of the iterator.
+    /// 否则，它基本上具有将列表公开为<see cref="IEnumerable{T}"/>的相同特性；
+    /// 因此，如果您需要将项目公开为IEnumerable之类的类型，并且这些项目在内部存储为列表，那么这是一个不错的选择。
+    /// 此类型确实实现了IEnumerable，因此可以直接与需要它的函数（例如，System.LINQ）一起使用。
+    /// 但是，由于迭代器的装箱，这将降低性能。
     /// </remarks>
-    /// <typeparam name="TBase">Type items in the list are stored as.</typeparam>
-    /// <typeparam name="TItem">Actual type of items in the list.</typeparam>
+    /// <typeparam name="TBase">列表中存储的项目的类型。</typeparam>
+    /// <typeparam name="TItem">列表中项目的实际类型。</typeparam>
     [PublicAPI]
     public struct ListCastEnumerator<TBase, TItem> : IEnumerator<TItem>, IEnumerable<TItem>
         where TItem : TBase
@@ -29,9 +28,9 @@ namespace GoRogue
         private TItem _current;
 
         /// <summary>
-        /// Constructor.
+        /// 构造函数。
         /// </summary>
-        /// <param name="list">List to iterate over.</param>
+        /// <param name="list">要迭代的列表。</param>
         public ListCastEnumerator(List<TBase> list)
         {
             _enumerator = list.GetEnumerator();
@@ -64,9 +63,9 @@ namespace GoRogue
         }
 
         /// <summary>
-        /// Returns this enumerator.
+        /// 返回此枚举器。
         /// </summary>
-        /// <returns>This enumerator.</returns>
+        /// <returns>此枚举器。</returns>
         public ListCastEnumerator<TBase, TItem> GetEnumerator() => this;
 
         IEnumerator<TItem> IEnumerable<TItem>.GetEnumerator() => this;
@@ -75,15 +74,14 @@ namespace GoRogue
     }
 
     /// <summary>
-    /// A structure similar to <see cref="ListCastEnumerator{TBase, TItem}"/>, but for <see cref="IReadOnlyList{T}"/>.  It is not quite
-    /// as fast as <see cref="ListCastEnumerator{TBase, TItem}"/>, but is still faster than using the typical Enumerable implementation
-    /// for IReadOnlyList.  You should only use this if you can't use <see cref="ListCastEnumerator{TBase, TItem}"/> due to the type
-    /// you're working with; they share the same characteristics otherwise.
+    /// 一个与<see cref="ListCastEnumerator{TBase, TItem}"/>类似的结构，但适用于<see cref="IReadOnlyList{T}"/>。它的速度不如<see cref="ListCastEnumerator{TBase, TItem}"/>快，
+    /// 但仍然比使用 IReadOnlyList 的典型 Enumerable 实现要快。仅当由于所处理的类型而无法使用<see cref="ListCastEnumerator{TBase, TItem}"/>时，才应使用它；
+    /// 否则，它们具有相同的特性。
     ///
-    /// All objects _must_ be of the specified type, or the iterator will not function.
+    /// 所有对象_必须_为指定的类型，否则迭代器将无法正常工作。
     /// </summary>
-    /// <typeparam name="TBase">Type items in the list are stored as.</typeparam>
-    /// <typeparam name="TItem">Actual type of items in the list.</typeparam>
+    /// <typeparam name="TBase">列表中存储的项的类型。</typeparam>
+    /// <typeparam name="TItem">列表中项的实际类型。</typeparam>
     [PublicAPI]
     public struct ReadOnlyListCastEnumerator<TBase, TItem> : IEnumerator<TItem>, IEnumerable<TItem>
         where TItem : TBase
@@ -92,9 +90,9 @@ namespace GoRogue
         private TItem _current;
 
         /// <summary>
-        /// Constructor.
+        /// 构造函数。
         /// </summary>
-        /// <param name="list">List to iterate over.</param>
+        /// <param name="list">要遍历的列表。</param>
         public ReadOnlyListCastEnumerator(IReadOnlyList<TBase> list)
         {
             _enumerator = new ReadOnlyListEnumerator<TBase>(list);
@@ -127,9 +125,9 @@ namespace GoRogue
         }
 
         /// <summary>
-        /// Returns this enumerator.
+        /// 返回此枚举器。
         /// </summary>
-        /// <returns>This enumerator.</returns>
+        /// <returns>此枚举器。</returns>
         public ReadOnlyListCastEnumerator<TBase, TItem> GetEnumerator() => this;
 
         IEnumerator<TItem> IEnumerable<TItem>.GetEnumerator() => this;

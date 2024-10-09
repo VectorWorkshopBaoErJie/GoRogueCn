@@ -4,68 +4,67 @@ using JetBrains.Annotations;
 namespace GoRogue
 {
     /// <summary>
-    /// Read-only representation of <see cref="DisjointSet"/>.
+    /// <see cref="DisjointSet"/> 的只读表示。
     /// </summary>
     [PublicAPI]
     public interface IReadOnlyDisjointSet
     {
+
         /// <summary>
-        /// Fired when two sets are joined into one.  The arguments give the IDs of the two sets that were joined.
+        /// 当两个集合合并为一个时触发。参数提供合并的两个集合的ID。
         /// </summary>
         public event EventHandler<JoinedEventArgs>? SetsJoined;
 
         /// <summary>
-        /// Number of distinct sets.
+        /// 不同集合的数量。
         /// </summary>
         int Count { get; }
 
         /// <summary>
-        /// Returns the ID for the parent of the set containing the set with ID <paramref name="objectID" />,
-        /// performing path compression as search is completed.
+        /// 返回包含ID为<paramref name="objectID" />的集合的父集合的ID，并在搜索完成时执行路径压缩。
         /// </summary>
-        /// <param name="objectID">ID of the object to search for.</param>
-        /// <returns>The ID for the parent of the object given.</returns>
+        /// <param name="objectID">要搜索的对象的ID。</param>
+        /// <returns>给定对象的父对象的ID。</returns>
         int Find(int objectID);
 
         /// <summary>
-        /// Returns true if the objects specified by the given IDs are in the same set.
+        /// 如果由给定ID指定的对象位于同一集合中，则返回true。
         /// </summary>
-        /// <param name="objectID1" />
-        /// <param name="objectID2" />
-        /// <returns>True if the the objects specified by the given IDs are in the same set, false otherwise.</returns>
+        /// <param name="objectID1">第一个对象的ID。</param>
+        /// <param name="objectID2">第二个对象的ID。</param>
+        /// <returns>如果由给定ID指定的对象位于同一集合中，则为true；否则为false。</returns>
         bool InSameSet(int objectID1, int objectID2);
     }
 
     /// <summary>
-    /// Read-only representation of <see cref="DisjointSet{T}"/>.
+    /// <see cref="DisjointSet{T}"/> 的只读表示。
     /// </summary>
     [PublicAPI]
     public interface IReadOnlyDisjointSet<T>
     {
         /// <summary>
-        /// Fired when two sets are joined into one.  The arguments give the two sets that were joined.
+        /// 当两个集合合并为一个集合时触发。参数提供被合并的两个集合。
         /// </summary>
         public event EventHandler<JoinedEventArgs<T>>? SetsJoined;
 
         /// <summary>
-        /// Number of distinct sets.
+        /// 不同集合的数量。
         /// </summary>
         int Count { get; }
 
         /// <summary>
-        /// Returns the parent of the set containing <paramref name="item" />, performing path compression as search is
-        /// completed.
+        /// 返回包含<paramref name="item" />的集合的父级，并在搜索完成时执行路径压缩。
         /// </summary>
-        /// <param name="item">Object to search for.</param>
-        /// <returns>The parent of the object given.</returns>
+        /// <param name="item">要搜索的对象。</param>
+        /// <returns>给定对象的父级。</returns>
         T Find(T item);
 
         /// <summary>
-        /// Returns true if the two objects specified are in the same set.
+        /// 如果指定的两个对象位于同一集合中，则返回true。
         /// </summary>
-        /// <param name="item1" />
-        /// <param name="item2" />
-        /// <returns>True if the two objects are in the same set, false otherwise.</returns>
+        /// <param name="item1">第一个要检查的对象。</param>
+        /// <param name="item2">第二个要检查的对象。</param>
+        /// <returns>如果两个对象位于同一集合中，则为true；否则为false。</returns>
         bool InSameSet(T item1, T item2);
     }
 }

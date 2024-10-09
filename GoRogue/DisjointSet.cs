@@ -7,26 +7,26 @@ using SadRogue.Primitives;
 namespace GoRogue
 {
     /// <summary>
-    /// Event arguments for the <see cref="DisjointSet.SetsJoined"/> event.
+    /// 提供有关<see cref="DisjointSet.SetsJoined"/>事件的数据。
     /// </summary>
     [PublicAPI]
     public class JoinedEventArgs : EventArgs
     {
         /// <summary>
-        /// The larger of the two sets that were joined; becomes the new parent set.
+        /// 合并后成为新父集合的集合ID。
         /// </summary>
         public readonly int LargerSetID;
 
         /// <summary>
-        /// The smaller of the two sets that were joined; becomes the new child set.
+        /// 合并后成为新子集合的集合ID。
         /// </summary>
         public readonly int SmallerSetID;
 
         /// <summary>
-        ///
+        /// 初始化<see cref="JoinedEventArgs"/>类的新实例。
         /// </summary>
-        /// <param name="largerSetID">The larger of the two sets that were joined; becomes the new parent set.</param>
-        /// <param name="smallerSetID">The smaller of the two sets that were joined; becomes the new child set.</param>
+        /// <param name="largerSetID">合并后成为新父集合的集合ID。</param>
+        /// <param name="smallerSetID">合并后成为新子集合的集合ID。</param>
         public JoinedEventArgs(int largerSetID, int smallerSetID)
         {
             LargerSetID = largerSetID;
