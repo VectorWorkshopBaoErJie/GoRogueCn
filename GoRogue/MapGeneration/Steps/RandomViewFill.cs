@@ -7,45 +7,42 @@ using ShaiRandom.Generators;
 namespace GoRogue.MapGeneration.Steps
 {
     /// <summary>
-    /// Randomly fills a boolean <see cref="SadRogue.Primitives.GridViews.IGridView{T}"/> with true/false values.  Creates a grid view
-    /// with the given tag if none is present.
+    /// 使用true/false值随机填充一个布尔型<see cref="SadRogue.Primitives.GridViews.IGridView{T}"/>。如果不存在，则使用给定的标签创建一个网格视图。
     /// </summary>
     [PublicAPI]
     public class RandomViewFill : GenerationStep
     {
         /// <summary>
-        /// Optional tag that must be associated with the grid view that random values are set to.
+        /// 必须与设置随机值的网格视图相关联的可选标签。
         /// </summary>
         public readonly string? GridViewComponentTag;
 
         /// <summary>
-        /// The RNG to use for filling the view.
+        /// 用于填充视图的随机数生成器。
         /// </summary>
         public IEnhancedRandom RNG = GlobalRandom.DefaultRNG;
 
         /// <summary>
-        /// Represents the percent chance that a given cell will be a floor cell when the map is
-        /// initially randomly filled.
+        /// 表示在地图最初随机填充时，给定单元格成为地面单元格的百分比几率。
         /// </summary>
         public float FillProbability = 40f;
 
         /// <summary>
-        /// Whether or not to exclude the perimeter points from the random fill.
+        /// 是否在随机填充时排除周边点。
         /// </summary>
         public bool ExcludePerimeterPoints = true;
 
         /// <summary>
-        /// How many squares to fill before yield returning for a pause.  Defaults to no pauses (0).
+        ///  在暂停之前填充多少个方格。默认为不暂停（0）。
         /// </summary>
         public uint FillsBetweenPauses;
 
         /// <summary>
-        /// Creates a new step for applying random values to a map view.
+        /// 创建一个新步骤，用于向地图视图应用随机值。
         /// </summary>
-        /// <param name="name">The name of the generation step.  Defaults to <see cref="RandomViewFill" />.</param>
+        /// <param name="name">生成步骤的名称。默认为<see cref="RandomViewFill" />。</param>
         /// <param name="gridViewComponentTag">
-        /// Optional tag that must be associated with the grid view that random values are set to.  Defaults to
-        /// "WallFloor".
+        /// 必须与设置随机值的网格视图相关联的可选标签。默认为"WallFloor"。
         /// </param>
         public RandomViewFill(string? name = null, string? gridViewComponentTag = "WallFloor")
             : base(name)

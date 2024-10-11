@@ -7,38 +7,37 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.MapGeneration.Steps
 {
     /// <summary>
-    /// Finds the distinct areas in the boolean grid view specified, and adds them to the item list with the tag
-    /// specified.
+    /// 在指定的布尔网格视图中查找不同的区域，并使用指定的标签将它们添加到项目列表中。
     /// </summary>
     [PublicAPI]
     public class AreaFinder : GenerationStep
     {
         /// <summary>
-        /// Optional tag that must be associated with the grid view used to find areas.
+        /// 与用于查找区域的网格视图相关联的可选标签。
         /// </summary>
         public readonly string? GridViewComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component used to store areas found by this algorithm.
+        /// 与用于存储此算法找到的区域的组件相关联的可选标签。
         /// </summary>
         public readonly string? AreasComponentTag;
 
         /// <summary>
-        /// The adjacency method to use for determining whether two locations are in the same area.
+        /// 用于确定两个位置是否位于同一区域的邻接方法。
         /// </summary>
         public AdjacencyRule AdjacencyMethod = AdjacencyRule.Cardinals;
 
         /// <summary>
-        /// Creates a new AreaFinder generation step.
+        /// 创建一个新的AreaFinder生成步骤。
         /// </summary>
-        /// <param name="name">The name of the generation step.  Defaults to <see cref="AreaFinder"/></param>
+        /// <param name="name">生成步骤的名称。默认为<see cref="AreaFinder"/></param>
         /// <param name="gridViewComponentTag">
-        /// Optional tag that must be associated with the grid view used to find areas.
-        /// Defaults to "WallFloor".
+        /// 与用于查找区域的网格视图相关联的可选标签。
+        /// 默认为"WallFloor"。
         /// </param>
         /// <param name="areasComponentTag">
-        /// Optional tag that must be associated with the component used to store areas found by this algorithm.
-        /// Defaults to "Areas".
+        /// 与用于存储此算法找到的区域的组件相关联的可选标签。
+        /// 默认为"Areas"。
         /// </param>
         public AreaFinder(string? name = null, string? gridViewComponentTag = "WallFloor",
                           string? areasComponentTag = "Areas")

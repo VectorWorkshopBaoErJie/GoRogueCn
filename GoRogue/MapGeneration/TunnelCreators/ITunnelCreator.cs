@@ -5,32 +5,29 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.MapGeneration.TunnelCreators
 {
     /// <summary>
-    /// Interface for implementing an algorithm for creating a tunnel between two positions on a
-    /// walkability map.
+    /// 用于实现在可步行性地图上两个位置之间创建隧道的算法的接口。
     /// </summary>
     [PublicAPI]
     public interface ITunnelCreator
     {
         /// <summary>
-        /// Implements the algorithm, creating the tunnel between the two points (ensuring there is a
-        /// path of positions set to true between those two points).
+        /// 实现该算法，在两个点之间创建隧道（确保这两个点之间存在一条设置为true的位置路径）。
         /// </summary>
-        /// <param name="map">_grid to create the tunnel on.</param>
-        /// <param name="tunnelStart">Start position to connect.</param>
-        /// <param name="tunnelEnd">End position to connect.</param>
-        /// <returns>An area containing all points that are part of the tunnel.</returns>
+        /// <param name="map">要在其上创建隧道的网格。</param>
+        /// <param name="tunnelStart">要连接的起始位置。</param>
+        /// <param name="tunnelEnd">要连接的结束位置。</param>
+        /// <returns>包含隧道中所有点的区域。</returns>
         Area CreateTunnel(ISettableGridView<bool> map, Point tunnelStart, Point tunnelEnd);
 
         /// <summary>
-        /// Implements the algorithm, creating the tunnel between the two points (ensuring there is a
-        /// path of positions set to true between those two points).
+        /// 实现该算法，在两个点之间创建隧道（确保这两个点之间存在一条设置为true的位置路径）。
         /// </summary>
-        /// <param name="map">_grid to create the tunnel on.</param>
-        /// <param name="startX">X-value of the start position to connect.</param>
-        /// <param name="startY">Y-value of the start position to connect.</param>
-        /// <param name="endX">X-value of the end position to connect.</param>
-        /// <param name="endY">Y-value of the end position to connect.</param>
-        /// <returns>An area containing all points that are part of the tunnel.</returns>
+        /// <param name="map">要在其上创建隧道的网格。</param>
+        /// <param name="startX">要连接的起始位置的X值。</param>
+        /// <param name="startY">要连接的起始位置的Y值。</param>
+        /// <param name="endX">要连接的结束位置的X值。</param>
+        /// <param name="endY">要连接的结束位置的Y值。</param>
+        /// <returns>包含隧道中所有点的区域。</returns>
         Area CreateTunnel(ISettableGridView<bool> map, int startX, int startY, int endX, int endY);
     }
 }

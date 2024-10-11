@@ -7,70 +7,66 @@ using SadRogue.Primitives;
 namespace GoRogue.SenseMapping.Sources
 {
     /// <summary>
-    /// Different types of Ripple algorithms for how source values spread from their source's location.
+    /// 源值从其源位置扩散的不同 Ripple 算法类型。
     /// </summary>
     [PublicAPI]
     public enum RippleType
     {
         /// <summary>
-        /// Performs calculation by pushing values out from the source location. Source values spread
-        /// around corners a bit.
+        /// 通过从源位置推送值来进行计算。源值会稍微绕过角落扩散。
         /// </summary>
         Regular,
 
         /// <summary>
-        /// Similar to <see cref="Regular" /> but with different spread mechanics. Values spread around edges like
-        /// smoke or water, but maintains a tendency to curl towards the start position as it goes around edges.
+        /// 类似于<see cref="Regular" />，但具有不同的扩散机制。值像烟雾或水一样绕过边缘扩散，
+        /// 但在绕过边缘时保持向起始位置卷曲的趋势。
         /// </summary>
         Loose,
 
         /// <summary>
-        /// Similar to <see cref="Regular" />, but values spread around corners only very slightly.
+        /// 类似于<see cref="Regular" />，但值只稍微绕过角落扩散。
         /// </summary>
         Tight,
 
         /// <summary>
-        /// Similar to <see cref="Regular" />, but values spread around corners a lot.
+        /// 类似于<see cref="Regular" />，但值会大量绕过角落扩散。
         /// </summary>
         VeryLoose
     }
 
     /// <summary>
-    /// A sense source which performs its spreading calculations by using a "ripple" algorithm.
+    /// 使用“ripple”算法执行其扩散计算的感知源。
     /// </summary>
     /// <remarks>
-    /// Values spread out from the center, decreasing with distance and in accordance with the resistance for each cell they encounter.
+    /// 值从中心向外扩散，随着距离的增加而减小，并根据它们遇到的每个单元格的阻力进行调整。
     ///
-    /// There are several variations of the algorithm provided, which produce slightly different spreading tendencies.  See the <see cref="RippleType"/>
-    /// value documentation for details.
+    /// 提供了算法的几种变体，它们产生略有不同的扩散趋势。有关详细信息，请参阅<see cref="RippleType"/>值的文档。
     /// </remarks>
     [PublicAPI]
     public class RippleSenseSource : SenseSourceBase
     {
         /// <summary>
-        /// The variation of the ripple algorithm being used.  See the <see cref="Sources.RippleType"/> value documentation for descriptions of each.
+        /// 正在使用的ripple算法的变体。请参阅<see cref="Sources.RippleType"/>值的文档以了解每个变体的描述。
         /// </summary>
         public RippleType RippleType { get; set; }
 
         private BitArray _nearLight;
-        // Pre-allocated list so we don't re-allocate small arrays
+        // 预分配的列表，以避免重新分配小数组
         private readonly List<Point> _neighbors;
         private readonly Queue<Point> _dq = new Queue<Point>();
 
         /// <summary>
-        /// Creates a source which spreads outwards in all directions.
+        /// 创建一个向所有方向扩散的源。
         /// </summary>
-        /// <param name="position">The position on a map that the source is located at.</param>
+        /// <param name="position">源在地图上的位置。</param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是源值将散发的最大距离，前提是区域完全无阻碍。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算（或可隐式转换为<see cref="Distance" />的类型，如<see cref="Radius" />）。
         /// </param>
-        /// <param name="rippleType">The variation of the ripple algorithm to use.  See the <see cref="Sources.RippleType"/> value documentation for descriptions of each.</param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="rippleType">要使用的ripple算法的变体。请参阅<see cref="Sources.RippleType"/>值的文档以了解每个变体的描述。</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RippleSenseSource(Point position, double radius, Distance distanceCalc,
             RippleType rippleType = RippleType.Regular, double intensity = 1)
             : base(position, radius, distanceCalc, intensity)
@@ -85,24 +81,22 @@ namespace GoRogue.SenseMapping.Sources
         }
 
         /// <summary>
-        /// Creates a source which spreads outwards in all directions.
+        /// 创建一个向所有方向扩散的源。
         /// </summary>
         /// <param name="positionX">
-        /// The X-value of the position on a map that the source is located at.
+        /// 源在地图上位置的X值。
         /// </param>
         /// <param name="positionY">
-        /// The Y-value of the position on a map that the source is located at.
+        /// 源在地图上位置的Y值。
         /// </param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是源值将散发的最大距离，前提是区域完全无阻碍。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算（或可隐式转换为<see cref="Distance" />的类型，如<see cref="Radius" />）。
         /// </param>
-        /// <param name="rippleType">The variation of the ripple algorithm to use.  See the <see cref="Sources.RippleType"/> value documentation for descriptions of each.</param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="rippleType">要使用的ripple算法的变体。请参阅<see cref="Sources.RippleType"/>值的文档以了解每个变体的描述。</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RippleSenseSource(int positionX, int positionY, double radius, Distance distanceCalc,
             RippleType rippleType = RippleType.Regular, double intensity = 1)
             : base(positionX, positionY, radius, distanceCalc, intensity)
@@ -117,27 +111,24 @@ namespace GoRogue.SenseMapping.Sources
         }
 
         /// <summary>
-        /// Constructor.  Creates a source which spreads only in a cone defined by the given angle and span.
+        /// 构造函数。创建一个仅在由给定角度和跨度定义的圆锥体内扩散的源。
         /// </summary>
-        /// <param name="position">The position on a map that the source is located at.</param>
+        /// <param name="position">源在地图上的位置。</param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是源值将散发的最大距离，前提是区域完全无阻碍。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算（或可隐式转换为<see cref="Distance" />的类型，如<see cref="Radius" />）。
         /// </param>
         /// <param name="angle">
-        /// The angle in degrees that specifies the outermost center point of the cone formed
-        /// by the source's values. 0 degrees points right.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体的最外中心点。0度指向右侧。
         /// </param>
         /// <param name="span">
-        /// The angle, in degrees, that specifies the full arc contained in the cone formed by the source's values --
-        /// <paramref name="angle" /> / 2 degrees are included on either side of the cone's center line.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体中所包含的全弧——
+        /// <paramref name="angle" /> / 2度包含在圆锥体中心线的任一侧。
         /// </param>
-        /// <param name="rippleType">The variation of the ripple algorithm to use.  See the <see cref="Sources.RippleType"/> value documentation for descriptions of each.</param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="rippleType">要使用的ripple算法的变体。请参阅<see cref="Sources.RippleType"/>值的文档以了解每个变体的描述。</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RippleSenseSource(Point position, double radius, Distance distanceCalc, double angle, double span,
             RippleType rippleType = RippleType.Regular, double intensity = 1)
             : base(position, radius, distanceCalc, angle, span, intensity)
@@ -152,28 +143,25 @@ namespace GoRogue.SenseMapping.Sources
         }
 
         /// <summary>
-        /// Constructor.  Creates a source which spreads only in a cone defined by the given angle and span.
+        /// 构造函数。创建一个仅在由给定角度和跨度定义的圆锥体内扩散的源。
         /// </summary>
-        /// <param name="positionX">The x-value for the position on a map that the source is located at.</param>
-        /// <param name="positionY">The y-value for the position on a map that the source is located at.</param>
+        /// <param name="positionX">源在地图上位置的X值。</param>
+        /// <param name="positionY">源在地图上位置的Y值。</param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是源值将散发的最大距离，前提是区域完全无阻碍。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算（或可隐式转换为<see cref="Distance" />的类型，如<see cref="Radius" />）。
         /// </param>
         /// <param name="angle">
-        /// The angle in degrees that specifies the outermost center point of the cone formed
-        /// by the source's values. 0 degrees points right.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体的最外中心点。0度指向右侧。
         /// </param>
         /// <param name="span">
-        /// The angle, in degrees, that specifies the full arc contained in the cone formed by the source's values --
-        /// <paramref name="angle" /> / 2 degrees are included on either side of the cone's center line.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体中所包含的全弧——
+        /// <paramref name="angle" /> / 2度包含在圆锥体中心线的任一侧。
         /// </param>
-        /// <param name="rippleType">The variation of the ripple algorithm to use.  See the <see cref="Sources.RippleType"/> value documentation for descriptions of each.</param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="rippleType">要使用的波纹算法的变体。请参阅<see cref="Sources.RippleType"/>值的文档以了解每个变体的描述。</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RippleSenseSource(int positionX, int positionY, double radius, Distance distanceCalc, double angle,
             double span, RippleType rippleType = RippleType.Regular, double intensity = 1)
             : base(positionX, positionY, radius, distanceCalc, angle, span, intensity)

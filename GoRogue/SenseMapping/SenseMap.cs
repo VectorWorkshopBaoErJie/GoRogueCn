@@ -10,95 +10,86 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.SenseMapping
 {
     /// <summary>
-    /// Implementation of <see cref="ISenseMap"/> that implements the required fields/methods in a way applicable to many typical use cases.
+    /// <see cref="ISenseMap"/>的实现，以一种适用于许多典型用例的方式实现了所需的字段/方法。
     /// </summary>
     /// <remarks>
-    /// This implementation of <see cref="ISenseMap"/> implements the enumerables by using a pair of hash maps to keep track of the positions
-    /// which are non-0 in the current (and previous) calculate calls.  This provides relatively efficient implementations that should be applicable
-    /// to a variety of use cases.
+    /// 此<see cref="ISenseMap"/>实现通过使用一对哈希映射来跟踪当前（和之前）计算调用中非零的位置，从而实现了可枚举。这提供了相对高效的实现，应适用于各种用例。
     ///
-    /// The calculation, by default, is performed by first calling the <see cref="ISenseSource.CalculateLight"/> function of all sources.  This is performed
-    /// in parallel via a Parallel.ForEach loop, if there is more than one source and the <see cref="ParallelCalculate"/> property is set to true. Generally, even at
-    /// 2 sense sources there is notable benefit to parallelizing the calculation; however feel free to use this flag to tweak this to your use case.
+    /// 默认情况下，计算首先通过调用所有源的<see cref="ISenseSource.CalculateLight"/>函数来执行。
+    /// 如果有多个源且<see cref="ParallelCalculate"/>属性设置为true，则通过 Parallel.ForEach 循环并行执行此操作。
+    /// 通常，即使在 2 个感官源的情况下，并行化计算也有显著的好处；但是，请随意使用此标志根据您的用例进行调整。
     ///
-    /// After all calculations are complete, the <see cref="OnCalculate"/> implementation then takes the result view of each source and copies it to the appropriate
-    /// section of the <see cref="IReadOnlySenseMap.ResultView"/> property.  This is done sequentially, in order to avoid any problems with overlapping sources.
-    /// Values are aggregated by simply adding the current value and the new value together.
+    /// 所有计算完成后，<see cref="OnCalculate"/>实现将获取每个源的结果视图，并将其复制到<see cref="IReadOnlySenseMap.ResultView"/>属性的相应部分。
+    /// 这是按顺序完成的，以避免重叠源带来的任何问题。值是通过简单地将当前值和新值相加来聚合的。
     ///
-    /// If you want to customize the way values are aggregated together, you may customize the <see cref="ApplySenseSourceToResult"/> function.  This function is
-    /// used to apply the result view of the specified sense source onto the result view.  If you simply want to change the aggregation method, then you can copy-paste
-    /// the function and change the line that performs the aggregation; the aggregation method itself is not provided as a separate function for performance reasons.
-    /// You may also override this function to customize the order/method of performing the aggregation.
+    /// 如果您想自定义值的聚合方式，可以自定义<see cref="ApplySenseSourceToResult"/>函数。
+    /// 此函数用于将指定感官源的结果视图应用到结果视图上。如果您只是想更改聚合方法，则可以复制粘贴该函数并更改执行聚合的行；
+    /// 出于性能原因，聚合方法本身不作为单独的函数提供。您也可以重写此函数以自定义执行聚合的顺序/方法。
     ///
-    /// Most other customization would require overriding the <see cref="OnCalculate"/> function.
+    /// 大多数其他自定义将需要重写<see cref="OnCalculate"/>函数。
     ///
-    /// You may also simply create your own implementation of <see cref="ISenseSource"/>, either by directly implementing that interface or inheriting from
-    /// <see cref="SenseMapBase"/>.  This may be the best option if, for example, you want to avoid the use of a hash set in the enumerable implementation. 
+    /// 您还可以直接实现该接口或从<see cref="SenseMapBase"/>继承来创建自己的<see cref="ISenseSource"/>实现。
+    /// 例如，如果您想避免在可枚举实现中使用哈希集合，这可能是最佳选择。
     /// </remarks>
     [PublicAPI]
     public class SenseMap : SenseMapBase
     {
         /// <summary>
-        /// A hash set which contains the positions which have non-0 values in the most current calculation result.
+        /// 一个哈希集合，包含最近一次计算结果中非零值的位置。
         /// </summary>
         /// <remarks>
-        /// This hash set is the backing structure for <see cref="NewlyInSenseMap"/> and <see cref="NewlyOutOfSenseMap"/>,
-        /// as well as <see cref="CurrentSenseMap"/>. During <see cref="OnCalculate"/>, this value is cleared before
-        /// the new calculations are performed.
+        /// 这个哈希集合是<see cref="NewlyInSenseMap"/>、<see cref="NewlyOutOfSenseMap"/>以及<see cref="CurrentSenseMap"/>的后备结构。
+        /// 在<see cref="OnCalculate"/>期间，执行新计算之前会清除此值。
         ///
-        /// Typically you will only need to interact with this if you are overriding <see cref="OnCalculate"/>; in this case, if
-        /// you do not call this class's implementation, you will need to perform this clearing yourself.
+        /// 通常，只有在重写<see cref="OnCalculate"/>时才需要与这个哈希集合交互；在这种情况下，如果不调用此类的实现，则需要自己执行清除操作。
         ///
-        /// In order to preserve the use of whatever hasher was passed to the class at startup, it is recommended that you do _not_
-        /// re-allocate this structure entirely.  See <see cref="OnCalculate"/> for a way to manage both this and <see cref="PreviousSenseMapBacking"/>
-        /// that does not involve re-allocating.
+        /// 为了保留在类启动时传递给它的任何哈希器的使用，建议不要完全重新分配这个结构。
+        /// 请参阅<see cref="OnCalculate"/>，了解一种管理这个结构和<see cref="PreviousSenseMapBacking"/>的方法，该方法不涉及重新分配。
         /// </remarks>
         protected HashSet<Point> CurrentSenseMapBacking;
         /// <inheritdoc />
         public override IEnumerable<Point> CurrentSenseMap => CurrentSenseMapBacking;
 
         /// <summary>
-        /// A hash set which contains the positions which had non-0 values in the previous calculation result.
+        /// 一个哈希集合，包含前一次计算结果中具有非零值的位置。
         /// </summary>
         /// <remarks>
-        /// This hash set is the backing structure for <see cref="NewlyInSenseMap"/> and <see cref="NewlyOutOfSenseMap"/>.
+        /// 这个哈希集合是<see cref="NewlyInSenseMap"/>和<see cref="NewlyOutOfSenseMap"/>的后备结构。
         /// 
-        /// Typically you will only need to interact with this if you are overriding <see cref="OnCalculate"/>; in this case, if
-        /// you do not call this class's implementation, you will need to ensure this is set as appropriate before the new calculation is performed.
+        /// 通常，只有在重写<see cref="OnCalculate"/>时才需要与这个哈希集合交互；在这种情况下，如果不调用此类的实现，
+        /// 则需要在执行新计算之前确保此集合被适当地设置。
         ///
-        /// In order to preserve the use of whatever hasher was passed to the class at startup, it is recommended that you do _not_
-        /// re-allocate this structure entirely.  See <see cref="OnCalculate"/> for a way to manage both this and <see cref="CurrentSenseMapBacking"/>
-        /// that does not involve re-allocating.
+        /// 为了保留在类启动时传递给它的任何哈希器的使用，建议不要完全重新分配这个结构。
+        /// 请参阅<see cref="OnCalculate"/>，了解一种不涉及重新分配的管理这个结构和<see cref="CurrentSenseMapBacking"/>的方法。
         /// </remarks>
         protected HashSet<Point> PreviousSenseMapBacking;
 
         /// <summary>
-        /// Whether or not to calculate each sense source's spread algorithm in parallel.  Has no effect if there is only one source added.
+        /// 是否并行计算每个感知源的扩散算法。如果仅添加了一个源，则此设置无效。
         /// </summary>
         /// <remarks>
-        /// When this is set to true, calling of <see cref="ISenseSource.CalculateLight"/> will happen in parallel via multiple threads.  A
-        /// Parallel.ForEach will be used, which will enable the use of a thread pool.
-        ///
-        /// In either case, the default implementation of sense sources always have their own result views on which they perform their calculations,
-        /// so there is no concern with overlapping sources.  This does NOT affect the copying of sense source's values from its local result view
-        /// to the sense map's one, which in the default implementation is always sequential.
+        /// 当此设置为true时，将通过多个线程并行调用<see cref="ISenseSource.CalculateLight"/>。
+        /// 将使用Parallel.ForEach，这将启用线程池的使用。
+        /// 
+        /// 在任何情况下，感知源的默认实现总是具有它们自己的结果视图，它们在这些视图上执行它们的计算，
+        /// 因此无需担心源重叠的问题。这不会影响从感知源的本地结果视图到感知映射的值的复制，
+        /// 在默认实现中，该复制过程始终是顺序的。
         /// </remarks>
         public bool ParallelCalculate { get; set; }
 
         /// <summary>
-        /// Constructor.
+        /// 构造函数。
         /// </summary>
-        /// <param name="resistanceView">The resistance view to use for calculations.</param>
+        /// <param name="resistanceView">用于计算的阻力视图。</param>
         /// <param name="resultViewAndResizer">
-        /// The view in which the sense map calculation results are stored, along with a method to use to resize it as needed.
+        /// 用于存储感知地图计算结果的视图，以及一个按需调整其大小的方法。
         ///
-        /// If unspecified or null, an ArrayView will be used for the result view, and the resize function will allocate a new
-        /// ArrayView of the appropriate size as needed.  This should be sufficient for most use cases.
+        /// 如果未指定或为 null ，则将为结果视图使用 ArrayView ，并且调整大小函数将按需分配适当大小的新 ArrayView 。这对于大多数用例应该足够了。
         ///
-        /// The resizer function must return a view with all of its values set to 0.0, which has the given width and height.
+        /// 调整大小函数必须返回一个具有给定宽度和高度的视图，且其所有值都设置为0.0。
         /// </param>
-        /// <param name="parallelCalculate">Whether or not to calculate the sense sources in parallel using Parallel.ForEach.  Has no effect if there is only one source added.</param>
-        /// <param name="hasher">The hashing algorithm to use for points in hash sets.  Defaults to the default hash algorithm for Points.</param>
+        /// <param name="parallelCalculate">是否使用 Parallel.ForEach 并行计算感知源。如果仅添加了一个源，则此设置无效。</param>
+        /// <param name="hasher">用于哈希集合中点的哈希算法。默认为 Points 的默认哈希算法。</param>
         public SenseMap(IGridView<double> resistanceView, CustomResultViewWithResize? resultViewAndResizer = null,
             bool parallelCalculate = true, IEqualityComparer<Point>? hasher = null)
             : base(resistanceView, resultViewAndResizer)
@@ -121,7 +112,7 @@ namespace GoRogue.SenseMapping
         {
             base.Reset();
 
-            // Cycle current and previous hash sets to avoid re-allocation of internal buffers
+            // 循环使用当前和之前的哈希集合，以避免重新分配内部缓冲区
             (PreviousSenseMapBacking, CurrentSenseMapBacking) = (CurrentSenseMapBacking, PreviousSenseMapBacking);
             CurrentSenseMapBacking.Clear();
         }
@@ -129,53 +120,51 @@ namespace GoRogue.SenseMapping
         /// <inheritdoc />
         protected override void OnCalculate()
         {
-            // Anything past 1 sense source seems to benefit notably from parallel execution
+            // 超过1个感知源的情况下，并行执行似乎能带来显著的好处
             if (SenseSources.Count > 1 && ParallelCalculate)
                 Parallel.ForEach(SenseSources, senseSource => { senseSource.CalculateLight(); });
             else
                 foreach (var senseSource in SenseSources)
                     senseSource.CalculateLight();
 
-            // Flush sources to actual senseMap
+            // 将源数据刷新到实际的senseMap中
             foreach (var senseSource in SenseSources)
                 ApplySenseSourceToResult(senseSource);
         }
 
         /// <summary>
-        /// Takes the given source and applies its values to the appropriate sub-area of <see cref="SenseMapBase.ResultViewBacking"/>.  Adds any locations that
-        /// end up with non-0 values to the <see cref="CurrentSenseMapBacking"/> hash set.
+        /// 接收给定的源并将其值应用到<see cref="SenseMapBase.ResultViewBacking"/>的适当子区域。
+        /// 将任何最终具有非0值的位置添加到<see cref="CurrentSenseMapBacking"/>哈希集中。
         /// </summary>
         /// <remarks>
-        /// Override this if you need to control the aggregation function (eg. do something other than add values together), or if you want to apply results
-        /// of sense source calculations to the sense map in a different way.
+        /// 如果您需要控制聚合函数（例如，执行除将值相加以外的其他操作），或者您想以不同的方式将感知源计算的结果应用到感知图上，请重写此方法。
         /// </remarks>
-        /// <param name="source">The source to apply.</param>
+        /// <param name="source">要应用的源。</param>
         protected virtual void ApplySenseSourceToResult(ISenseSource source)
         {
-            // Calculate actual radius bounds, given constraint based on location
+            // 根据位置约束，计算实际的半径边界
             var minX = Math.Min((int)source.Radius, source.Position.X);
             var minY = Math.Min((int)source.Radius, source.Position.Y);
             var maxX = Math.Min((int)source.Radius, ResistanceView.Width - 1 - source.Position.X);
             var maxY = Math.Min((int)source.Radius, ResistanceView.Height - 1 - source.Position.Y);
 
-            // Use radius bounds to extrapolate global coordinate scheme mins
+            // 使用半径边界来推断全局坐标系的最小值
             var gMin = source.Position - new Point(minX, minY);
 
-            // Use radius bound to extrapolate light-local coordinate scheme min and max bounds that
-            // are actually blitted
+            // 使用半径边界来推算实际绘制的局部光照坐标系的最小和最大边界
             var lMin = new Point((int)source.Radius - minX, (int)source.Radius - minY);
             var lMax = new Point((int)source.Radius + maxX, (int)source.Radius + maxY);
 
             for (var xOffset = 0; xOffset <= lMax.X - lMin.X; xOffset++)
                 for (var yOffset = 0; yOffset <= lMax.Y - lMin.Y; yOffset++)
                 {
-                    // Offset local/current by proper amount, and update light-map
+                    // 适当偏移局部/当前位置，并更新光照贴图
                     var c = new Point(xOffset, yOffset);
                     var gCur = gMin + c;
                     var lCur = lMin + c;
 
-                    // Null-forgiving because ResistanceView is set when sources are added, so this can't occur unless somebody has been
-                    // messing with values they're not supposed to, and adding a check would cost performance.
+                    // 此处不进行空值检查，因为在添加源时会设置ResistanceView，所以除非有人不当修改了不应修改的值，
+                    // 否则不会发生空引用。而且，添加检查会影响性能。
                     ResultViewBacking[gCur.X, gCur.Y] += source.ResultView[lCur.X, lCur.Y];
                     if (ResultViewBacking[gCur.X, gCur.Y] > 0.0)
                         CurrentSenseMapBacking.Add(gCur);

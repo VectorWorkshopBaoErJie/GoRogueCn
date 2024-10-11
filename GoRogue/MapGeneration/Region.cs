@@ -7,26 +7,26 @@ using JetBrains.Annotations;
 namespace GoRogue.MapGeneration
 {
     /// <summary>
-    /// Event fired when a region's Area is changed.
+    /// 当一个区域的面积发生变化时触发的事件。
     /// </summary>
     [PublicAPI]
     public class RegionAreaChangedEventArgs : EventArgs
     {
         /// <summary>
-        /// The previous Area
+        /// 之前的区域面积
         /// </summary>
         public readonly PolygonArea OldValue;
 
         /// <summary>
-        /// The Area to which we update
+        /// 我们更新到的区域面积
         /// </summary>
         public readonly PolygonArea NewValue;
 
         /// <summary>
-        /// The Event Arguments for when a region's area is changed
+        /// 当一个区域的面积发生变化时的事件参数
         /// </summary>
-        /// <param name="oldValue">The former value of the Area</param>
-        /// <param name="newValue">The new value of the Area</param>
+        /// <param name="oldValue">区域面积的前一个值</param>
+        /// <param name="newValue">区域面积的新值</param>
         public RegionAreaChangedEventArgs(PolygonArea oldValue, PolygonArea newValue)
         {
             OldValue = oldValue;
@@ -34,13 +34,13 @@ namespace GoRogue.MapGeneration
         }
     }
     /// <summary>
-    /// A region of the map with four sides of arbitrary shape and size
+    /// 地图上具有任意形状和大小的四边区域
     /// </summary>
     [PublicAPI]
     public class Region : IObjectWithComponents
     {
         /// <summary>
-        /// The Area of this region
+        /// 这个区域的面积
         /// </summary>
         public PolygonArea Area
         {
@@ -57,7 +57,7 @@ namespace GoRogue.MapGeneration
         private PolygonArea _area;
 
         /// <summary>
-        /// Fired when the Area is changed.
+        /// 当面积发生变化时触发。
         /// </summary>
         public EventHandler<RegionAreaChangedEventArgs>? AreaChanged;
 
@@ -65,10 +65,10 @@ namespace GoRogue.MapGeneration
         public IComponentCollection GoRogueComponents { get; }
 
         /// <summary>
-        /// Returns a new Region using the provided area
+        /// 使用提供的面积返回一个新的区域
         /// </summary>
-        /// <param name="area">This region's Area</param>
-        /// <param name="components">A component collection for this region</param>
+        /// <param name="area">这个区域的面积</param>
+        /// <param name="components">这个区域的组件集合</param>
         public Region(PolygonArea area, IComponentCollection? components = null)
         {
             _area = area;
@@ -77,7 +77,7 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Returns a string detailing the region's corner locations.
+        /// 返回一个字符串，详细描述区域的角落位置。
         /// </summary>
         public override string ToString()
         {

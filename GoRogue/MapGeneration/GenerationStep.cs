@@ -7,35 +7,34 @@ using JetBrains.Annotations;
 namespace GoRogue.MapGeneration
 {
     /// <summary>
-    /// Raised by generation steps in <see cref="GenerationStep.OnPerform(GenerationContext)" /> when a parameter has been
-    /// misconfigured.
+    /// 当参数配置错误时，由<see cref="GenerationStep.OnPerform(GenerationContext)" />中的生成步骤引发。
     /// </summary>
     [PublicAPI]
     public class InvalidConfigurationException : Exception
     {
         /// <summary>
-        /// Creates a configuration exception with a customized message.
+        /// 创建一个带有自定义消息的配置异常。
         /// </summary>
-        /// <param name="message" />
+        /// <param name="message">自定义的异常消息。</param>
         public InvalidConfigurationException(string message)
             : base(message)
         { }
 
         /// <summary>
-        /// Creates a configuration exception with a customized message an inner exception.
+        /// 创建一个带有自定义消息和内部异常的配置异常。
         /// </summary>
-        /// <param name="message" />
-        /// <param name="innerException" />
+        /// <param name="message">自定义的异常消息。</param>
+        /// <param name="innerException">内部异常。</param>
         public InvalidConfigurationException(string message, Exception innerException)
             : base(message, innerException)
         { }
 
         /// <summary>
-        /// Creates a configuration exception with a helpful message.
+        /// 创建一个带有有用消息的配置异常。
         /// </summary>
-        /// <param name="step">The generation step that the misconfigured parameter was encountered in.</param>
-        /// <param name="parameterName">The name of the misconfigured parameter.</param>
-        /// <param name="message">A message explaining the requirements for the parameter's value.</param>
+        /// <param name="step">遇到配置错误参数的生成步骤。</param>
+        /// <param name="parameterName">配置错误的参数名称。</param>
+        /// <param name="message">解释参数值要求的消息。</param>
         public InvalidConfigurationException(GenerationStep step, string parameterName, string message)
             : base("Invalid configuration encountered for generation step parameter:\n" +
                    $"    Generation Step: ${step.GetType().Name} (name: {step.Name})\n" +
@@ -47,50 +46,48 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Creates an empty configuration exception.
+        /// 创建一个空的配置异常。
         /// </summary>
         public InvalidConfigurationException()
         { }
-
         /// <summary>
-        /// Name of parameter that was misconfigured.
+        /// 配置错误的参数的名称。
         /// </summary>
         public string? ParameterName { get; }
 
         /// <summary>
-        /// Generation step that had a misconfigured parameter.
+        /// 包含配置错误参数的生成步骤。
         /// </summary>
         public GenerationStep? Step { get; }
     }
 
     /// <summary>
-    /// Raised by <see cref="GenerationStep" /> when required components are not present when
-    /// <see cref="GenerationStep.PerformStep(GenerationContext)" /> is called.
+    /// 当调用<see cref="GenerationStep.PerformStep(GenerationContext)" />方法时，如果所需组件不存在，则由<see cref="GenerationStep" />引发。
     /// </summary>
     [PublicAPI]
     public class MissingContextComponentException : Exception
     {
         /// <summary>
-        /// Tag of the required component that was not found, or null if no tag was required.
+        /// 未找到所需组件的标签，若不需要标签则为null。
         /// </summary>
         public readonly string? RequiredComponentTag;
 
         /// <summary>
-        /// Type of the required component that was not found.
+        /// 未找到的所需组件的类型。
         /// </summary>
         public readonly Type? RequiredComponentType;
 
         /// <summary>
-        /// Generation step that failed to find its required components.
+        /// 未能找到其所需组件的生成步骤。
         /// </summary>
         public readonly GenerationStep? Step;
 
         /// <summary>
-        /// Creates a new exception with a helpful error message.
+        /// 创建一个带有有用错误消息的新异常。
         /// </summary>
-        /// <param name="step">Generation step that failed to find its required components.</param>
-        /// <param name="requiredComponentType">Type of the required component that was not found.</param>
-        /// <param name="requiredComponentTag">Tag of the required component that was not found, or null if no tag was required.</param>
+        /// <param name="step">未能找到其所需组件的生成步骤。</param>
+        /// <param name="requiredComponentType">未找到的所需组件的类型。</param>
+        /// <param name="requiredComponentTag">未找到所需组件的标签，若不需要标签则为null。</param>
         public MissingContextComponentException(GenerationStep step, Type requiredComponentType,
                                                 string? requiredComponentTag)
             : base("Generation step was performed on a context that did not have the required components:\n" +
@@ -104,64 +101,63 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Creates an exception with a fully customized message.
+        /// 创建一个带有完全自定义消息的异常。
         /// </summary>
-        /// <param name="message" />
+        /// <param name="message">自定义消息。</param>
         public MissingContextComponentException(string message)
             : base(message)
         { }
 
         /// <summary>
-        /// Creates an exception with a fully customized message and inner exception.
+        /// 创建一个带有完全自定义消息和内部异常的异常。
         /// </summary>
-        /// <param name="message" />
-        /// <param name="innerException" />
+        /// <param name="message">自定义消息。</param>
+        /// <param name="innerException">内部异常。</param>
         public MissingContextComponentException(string message, Exception innerException)
             : base(message, innerException)
         { }
 
         /// <summary>
-        /// Creates an empty exception.
+        /// 创建一个空的异常。
         /// </summary>
         public MissingContextComponentException()
         { }
     }
 
     /// <summary>
-    /// Raised by map generation steps if they detect that an invalid state (that can occasionally happen) is detected,
-    /// and the map should be regenerated.  Automatically used by the <see cref="Generator.ConfigAndGenerateSafe"/> and
-    /// <see cref="Generator.ConfigAndGetStageEnumeratorSafe"/> functions.
+    /// 当地图生成步骤检测到无效状态（偶尔会发生）且应重新生成地图时引发。由<see cref="Generator.ConfigAndGenerateSafe"/>和
+    /// <see cref="Generator.ConfigAndGetStageEnumeratorSafe"/>函数自动使用。
     /// </summary>
     [PublicAPI]
     public class RegenerateMapException : Exception
     {
         /// <summary>
-        /// Creates map regeneration exception with no message.
+        /// 创建没有消息的地图再生异常。
         /// </summary>
         public RegenerateMapException()
         { }
 
         /// <summary>
-        /// Creates a map regeneration exception with a customized message.
+        /// 创建带有自定义消息的地图再生异常。
         /// </summary>
-        /// <param name="message" />
+        /// <param name="message">自定义消息。</param>
         public RegenerateMapException(string message)
             : base(message + "  This exception is expected for some generation steps; consider using ConfigAndGenerateSafe to automatically handle it.")
         { }
 
         /// <summary>
-        /// Creates a map regeneration exception with a customized message an inner exception.
+        /// 创建带有自定义消息和内部异常的地图再生异常。
         /// </summary>
-        /// <param name="message" />
-        /// <param name="innerException" />
+        /// <param name="message">自定义消息。</param>
+        /// <param name="innerException">内部异常。</param> 
         public RegenerateMapException(string message, Exception innerException)
             : base(message + "  This exception is expected for some generation steps; consider using ConfigAndGenerateSafe to automatically handle it.", innerException)
         { }
     }
 
-    // TODO: Figure out way to check for tags AND types that are the same (for some generation steps)?  This wrecks ClosestMapAreaConnector
+    // TODO: 找出检查具有相同标签和类型的方法（针对某些生成步骤）？这会破坏ClosestMapAreaConnector
     /// <summary>
-    /// Base class for implementing custom map generation steps.
+    /// 用于实现自定义地图生成步骤的基类。
     /// </summary>
     [PublicAPI]
     public abstract class GenerationStep
@@ -169,42 +165,41 @@ namespace GoRogue.MapGeneration
         private readonly ComponentTypeTagPair[] _requiredComponents;
 
         /// <summary>
-        /// The name of the generation step.
+        /// 生成步骤的名称。
         /// </summary>
         public readonly string Name;
 
-        // This constructor is required to remove ambiguous constructor call issues because both of the other ones use params
+        // 此构造函数是必需的，以消除因其他两个构造函数都使用params而产生的构造函数调用不明确的问题
         /// <summary>
-        /// Creates a generation step, optionally with a custom name.
+        /// 创建一个生成步骤，可选地带有自定义名称。
         /// </summary>
-        /// <param name="name">The name of the generation step being created.  Defaults to the name of the (runtime) class.</param>
+        /// <param name="name">正在创建的生成步骤的名称。默认为（运行时）类的名称。</param>
         protected GenerationStep(string? name = null)
             : this(name, Array.Empty<Type>())
         { }
 
         /// <summary>
-        /// Creates a generation step that requires the given component(s) on the <see cref="GenerationContext" /> to
-        /// function.
+        /// 创建一个生成步骤，该步骤需要在<see cref="GenerationContext" />上具有给定的组件才能运行。
         /// </summary>
         /// <param name="name">
-        /// The name of the generation step being created.  Defaults to the name of the (runtime) class.
+        /// 正在创建的生成步骤的名称。默认为（运行时）类的名称。
         /// </param>
         /// <param name="requiredComponents">
-        /// Components (and associated tags) that <see cref="OnPerform(GenerationContext)" /> will require from the
-        /// context.  Null specified as a tag means no particular tag is required; only a component of the given type.
+        /// <see cref="OnPerform(GenerationContext)" />需要从上下文中获取的组件（和关联标签）。
+        /// 指定为null的标签意味着不需要特定标签；只需要给定类型的组件。
         /// </param>
         protected GenerationStep(string? name = null, params Type[] requiredComponents)
             : this(name, requiredComponents.Select(type => new ComponentTypeTagPair(type, null)).ToArray())
         { }
 
         /// <summary>
-        /// Creates a generation step that requires the given component(s) on the <see cref="GenerationContext" /> to function.
+        /// 创建一个生成步骤，该步骤需要<see cref="GenerationContext" />上的给定组件才能运行。
         /// </summary>
         /// <param name="requiredComponents">
-        /// Components that <see cref="OnPerform(GenerationContext)" /> will require from the context, and the tag
-        /// required for each component.  Null means no particular tag is required.
+        /// <see cref="OnPerform(GenerationContext)" />将从上下文中需要的组件，以及每个组件所需的标签。
+        /// Null表示不需要特定标签。
         /// </param>
-        /// <param name="name">The name of the generation step being created.  Defaults to the name of the (runtime) class.</param>
+        /// <param name="name">正在创建的生成步骤的名称。默认为（运行时）类的名称。</param>
         protected GenerationStep(string? name = null, params ComponentTypeTagPair[] requiredComponents)
         {
             Name = name ?? GetType().Name;
@@ -212,18 +207,16 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Components that are required and enforced to be on the <see cref="GenerationContext" /> when it is passed to
-        /// <see cref="OnPerform(GenerationContext)" />.
-        /// Each component may optionally have a required tag.
+        /// 当传递给<see cref="OnPerform(GenerationContext)" />时，<see cref="GenerationContext" />上必须存在且强制要求的组件。
+        /// 每个组件可以有一个可选的必需标签。
         /// </summary>
         public IEnumerable<ComponentTypeTagPair> RequiredComponents => _requiredComponents;
 
         /// <summary>
-        /// Performs the generation step on the given map context.  Throws exception if a required component is missing.
-        /// This function is not virtual -- to implement actual generation logic, implement
-        /// <see cref="OnPerform(GenerationContext)" />.
+        /// 在给定的地图上下文中执行生成步骤。如果缺少必需的组件，将抛出异常。
+        /// 此函数不是虚拟的--要实现实际的生成逻辑，请实现<see cref="OnPerform(GenerationContext)" />。
         /// </summary>
-        /// <param name="context">Context to perform the generation step on.</param>
+        /// <param name="context">执行生成步骤的上下文。</param>
         public void PerformStep(GenerationContext context)
         {
             // Ensure required components exist
@@ -239,26 +232,24 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Return an enumerator that, when evaluated to completion, will perform each "stage" of the generation step
-        /// sequentially.
+        /// 返回一个枚举器，当评估完成时，它将按顺序执行生成步骤的每个“阶段”。
         /// </summary>
-        /// <param name="context">Context to perform the generation step on.</param>
-        /// <returns>An enumerator which, when evaluated, performs each stage of the step sequentially.</returns>
+        /// <param name="context">执行生成步骤的上下文。</param>
+        /// <returns>一个枚举器，当评估时，它将按顺序执行步骤的每个阶段。</returns>
         public IEnumerator<object?> GetStageEnumerator(GenerationContext context)
         {
-            // Check for required components
+            // 检查必需的组件
             CheckForRequiredComponents(context);
 
-            // Return enumerator which, when evaluated, will perform each stage of the step.
+            // 返回枚举器，当评估时，它将执行步骤的每个阶段。
             return OnPerform(context);
         }
 
         /// <summary>
-        /// Implement to perform the actual work of the generation step.  Use "yield return null" to indicate the end
-        /// of a "stage", eg. a point where execution can be paused when using
-        /// <see cref="Generator.GetStageEnumerator"/>.
+        /// 实现以执行生成步骤的实际工作。使用“yield return null”来表示一个“阶段”的结束，
+        /// 例如，在使用<see cref="Generator.GetStageEnumerator"/>时执行可以暂停的点。
         /// </summary>
-        /// <param name="context">Context to perform the generation step on.</param>
+        /// <param name="context">执行生成步骤的上下文。</param>
         protected abstract IEnumerator<object?> OnPerform(GenerationContext context);
 
         private void CheckForRequiredComponents(GenerationContext context)

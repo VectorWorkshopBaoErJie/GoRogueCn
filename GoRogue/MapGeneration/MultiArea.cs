@@ -8,8 +8,7 @@ using SadRogue.Primitives;
 namespace GoRogue.MapGeneration
 {
     /// <summary>
-    /// A class implementing the <see cref="IReadOnlyMultiArea"/> interface, that derives its area from multiple
-    /// "sub-areas".
+    /// 一个实现了<see cref="IReadOnlyMultiArea"/>接口的类，该类从多个“子区域”中派生其区域。
     /// </summary>
     [PublicAPI]
     public class MultiArea : IReadOnlyMultiArea
@@ -19,9 +18,9 @@ namespace GoRogue.MapGeneration
         /// <inheritdoc/>
         public IReadOnlyList<IReadOnlyArea> SubAreas => _subAreas.AsReadOnly();
 
-        // TODO: Modify to be in ExpandToFit function in Rectangle
+        // TODO: 修改为在Rectangle的ExpandToFit函数中
         /// <summary>
-        /// Smallest possible rectangle that encompasses every position in every sub-area.
+        /// 包含每个子区域中每个位置的最小可能矩形。
         /// </summary>
         public Rectangle Bounds
         {
@@ -49,7 +48,7 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Number of positions in all of this area's sub-areas combined.
+        /// 此区域所有子区域中位置的总数。
         /// </summary>
         public int Count => _subAreas.Sum(area => area.Count);
 
@@ -57,14 +56,14 @@ namespace GoRogue.MapGeneration
         public bool UseIndexEnumeration => false;
 
         /// <summary>
-        /// Returns positions from the area (via its sub-areas) in the same fashion you would via a list.
+        /// 以类似于列表的方式从区域（通过其子区域）返回位置。
         /// </summary>
         /// <remarks>
-        /// The indexing scheme considers index 0 to be index 0 in the first sub-area in <see cref="SubAreas"/>.
-        /// The indices proceed in increasing order across all points in that sub-area, then roll over into the next
-        ///  one.  Eg. index [SubAreas[0].Count] is actually index 0 in the second sub-area, ie. SubAreas[1][0].
+        /// 索引方案将索引0视为<see cref="SubAreas"/>中第一个子区域的索引0。
+        /// 索引在该子区域的所有点中以递增顺序进行，然后滚动到下一个子区域。
+        /// 例如，索引[SubAreas[0].Count]实际上是第二个子区域（即SubAreas[1][0]）的索引0。
         /// </remarks>
-        /// <param name="index">Index of position to retrieve.</param>
+        /// <param name="index">要检索的位置的索引。</param>
         public Point this[int index]
         {
             get
@@ -84,7 +83,7 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Creates an area with no points/subareas.
+        /// 创建一个没有点/子区域的区域。
         /// </summary>
         public MultiArea()
         {
@@ -92,48 +91,48 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Creates a MultiArea that has only the given sub-area.
+        /// 创建一个只包含给定子区域的MultiArea。
         /// </summary>
-        /// <param name="area">Sub-area to add.</param>
+        /// <param name="area">要添加的子区域。</param>
         public MultiArea(IReadOnlyArea area)
             : this(area.Yield())
         { }
 
         /// <summary>
-        /// Creates a multi-area that is comprised of the given sub-areas.
+        /// 创建一个由给定子区域组成的MultiArea。
         /// </summary>
-        /// <param name="areas">Sub-areas to add.</param>
+        /// <param name="areas">要添加的子区域。</param>
         public MultiArea(IEnumerable<IReadOnlyArea> areas) => _subAreas = new List<IReadOnlyArea>(areas);
 
         /// <summary>
-        /// Adds the given sub-area to the MultiArea.
+        /// 将给定的子区域添加到MultiArea中。
         /// </summary>
-        /// <param name="subArea">The sub-area to add.</param>
+        /// <param name="subArea">要添加的子区域。</param>
         public void Add(IReadOnlyArea subArea) => _subAreas.Add(subArea);
 
         /// <summary>
-        /// Adds the given sub-areas to the MultiArea.
+        /// 将给定的子区域添加到MultiArea中。
         /// </summary>
-        /// <param name="subAreas">The sub-areas to add.</param>
+        /// <param name="subAreas">要添加的子区域。</param>
         public void AddRange(IEnumerable<IReadOnlyArea> subAreas) => _subAreas.AddRange(subAreas);
 
         /// <summary>
-        /// Clears all sub-areas from the MultiArea.
+        /// 清除MultiArea中的所有子区域。
         /// </summary>
         public void Clear() => _subAreas.Clear();
 
         /// <summary>
-        /// Removes the given sub-area from the MultiArea.
+        /// 从MultiArea中移除给定的子区域。
         /// </summary>
-        /// <param name="subArea">The sub-area to remove.</param>
+        /// <param name="subArea">要移除的子区域。</param>
         public void Remove(IReadOnlyArea subArea) => _subAreas.Remove(subArea);
 
-        // TODO: Make this in the primitives lib an extension method or default interface method; it's a copy-paste of Area.
+        // TODO: 在基础库中将此方法制作为扩展方法或默认接口方法；这是从Area中复制粘贴的。
         /// <summary>
-        /// Compares for equality. Returns true if the two areas contain exactly the same points.
+        /// 进行相等性比较。如果两个区域包含完全相同的点，则返回true。
         /// </summary>
         /// <param name="other"/>
-        /// <returns>True if the areas contain exactly the same points, false otherwise.</returns>
+        /// <returns>如果两个区域包含完全相同的点，则返回true，否则返回false。</returns>
         public bool Matches(IReadOnlyArea? other)
         {
             if (other is null)
@@ -157,9 +156,9 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through all positions in all sub-areas.
+        /// 返回一个枚举器，用于遍历所有子区域中的所有位置。
         /// </summary>
-        /// <returns>An enumerator that iterates through all positions in all sub-areas.</returns>
+        /// <returns>一个枚举器，用于遍历所有子区域中的所有位置。</returns>
         public IEnumerator<Point> GetEnumerator()
         {
             foreach (var area in _subAreas)
@@ -170,17 +169,17 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through all positions in all sub-areas.
+        /// 返回一个枚举器，用于遍历所有子区域中的所有位置。
         /// </summary>
-        /// <returns>An enumerator that iterates through all positions in all sub-areas.</returns>
+        /// <returns>一个枚举器，用于遍历所有子区域中的所有位置。</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
-        /// Returns whether or not the given area is completely contained within the summation of this area's subareas.
+        /// 返回给定的区域是否完全包含在此区域的子区域总和之内。
         /// </summary>
-        /// <param name="area">Area to check.</param>
+        /// <param name="area">要检查的区域。</param>
         /// <returns>
-        /// True if the all of the given area's points are contained within one or more subareas, false otherwise.
+        /// 如果给定区域的所有点都包含在一个或多个子区域内，则为true，否则为false。
         /// </returns>
         public bool Contains(IReadOnlyArea area)
         {
@@ -210,10 +209,10 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Determines whether or not the given position is considered within one of this area's subareas or not.
+        /// 确定给定的位置是否被认为位于此区域的子区域之一内。
         /// </summary>
-        /// <param name="position">The position to check.</param>
-        /// <returns>True if the specified position is within one of the subareas, false otherwise.</returns>
+        /// <param name="position">要检查的位置。</param>
+        /// <returns>如果指定的位置位于子区域之一内，则为true，否则为false。</returns>
         public bool Contains(Point position)
         {
             for (int i = 0; i < _subAreas.Count; i++)
@@ -227,11 +226,11 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Determines whether or not the given position is considered within one of this area's subareas or not.
+        /// 确定给定的位置是否被认为位于此区域的子区域之一内。
         /// </summary>
-        /// <param name="positionX">X-value of the position to check.</param>
-        /// <param name="positionY">X-value of the position to check.</param>
-        /// <returns>True if the specified position is within one of the subareas, false otherwise.</returns>
+        /// <param name="positionX">要检查的位置的 X 值。</param>
+        /// <param name="positionY">要检查的位置的 Y 值。</param>
+        /// <returns>如果指定的位置位于子区域之一内，则为 true，否则为 false。</returns>
         public bool Contains(int positionX, int positionY)
         {
             for (int i = 0; i < _subAreas.Count; i++)
@@ -245,13 +244,11 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Returns whether or not the given map area intersects any of this area's subareas. If you intend to
-        /// determine/use the exact intersection based on this return value, it is best to instead
-        /// call <see cref="Area.GetIntersection"/>, and check the number
-        /// of positions in the result (0 if no intersection).
+        /// 返回给定的地图区域是否与当前区域的任何子区域相交。如果您打算根据此返回值确定/使用确切的交集，
+        /// 最好改为调用 <see cref="Area.GetIntersection"/>，并检查结果中的位置数量（如果无交集则为0）。
         /// </summary>
-        /// <param name="area">The area to check.</param>
-        /// <returns>True if the given area intersects one of the current one's subareas, false otherwise.</returns>
+        /// <param name="area">要检查的区域。</param>
+        /// <returns>如果给定区域与当前区域的某个子区域相交，则为true，否则为false。</returns>
         public bool Intersects(IReadOnlyArea area)
         {
             for (int i = 0; i < _subAreas.Count; i++)

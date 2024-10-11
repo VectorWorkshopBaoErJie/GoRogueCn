@@ -5,11 +5,11 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.MapGeneration.Steps
 {
     /// <summary>
-    /// Produces a very simple map that is entirely floor, with a single-thick outline of walls around the outside.
+    /// 生成一个非常简单的地图，该地图完全由地面组成，外围有单层厚的墙壁轮廓。
     ///
-    /// Context Components Required:
-    /// - None
-    /// Context Components Added/Used:
+    /// 所需的上下文组件：
+    /// - 无
+    /// 添加/使用的上下文组件：
     /// <list type="table">
     ///     <listheader>
     ///         <term>Component</term>
@@ -21,30 +21,27 @@ namespace GoRogue.MapGeneration.Steps
     ///     </item>
     /// </list>
     ///
-    /// An existing wall-floor component used if one is present; if not, a new one is added.
+    /// 如果存在现有的墙-地面组件，则使用它；否则，添加一个新的组件。
     /// </summary>
     /// <remarks>
-    /// This generation step simply turns the map into a giant rectangular room.  It sets the interior positions to
-    /// true, and outer-edge points to false, in the map context's map view with the given tag.  If the
-    /// GenerationContext has an existing map view context component, that component is used.  If not, an
-    /// <see cref="SadRogue.Primitives.GridViews.ArrayView{T}" /> where T is bool is created and added to the map context, whose width/height
-    /// match <see cref="GenerationContext.Width" />/<see cref="GenerationContext.Height" />.
+    /// 这个生成步骤简单地将地图变成一个巨大的矩形房间。在给定的标签的地图上下文的地图视图中，它将内部位置设置为
+    /// true，将外边缘点设置为 false。如果 GenerationContext 具有现有的地图视图上下文组件，则使用该组件。
+    /// 如果没有，则创建一个 <see cref="SadRogue.Primitives.GridViews.ArrayView{T}" />（其中 T 是 bool 类型）并将其添加到地图上下文中，
+    /// 其宽度/高度与 <see cref="GenerationContext.Width" />/<see cref="GenerationContext.Height" /> 相匹配。
     /// </remarks>
     [PublicAPI]
     public class RectangleGenerator : GenerationStep
     {
         /// <summary>
-        /// Optional tag that must be associated with the component used to set wall/floor status of tiles changed by this
-        /// algorithm.
+        /// 可选的标签，必须与用于设置此算法更改的图块的墙壁/地面状态的组件相关联。
         /// </summary>
         public readonly string? WallFloorComponentTag;
 
         /// <summary>
-        /// Creates a new rectangle map generation step.
+        /// 创建一个新的矩形地图生成步骤。
         /// </summary>
         /// <param name="wallFloorComponentTag">
-        /// Optional tag that must be associated with the map view component used to store/set
-        /// floor/wall status.  Defaults to "WallFloor".
+        /// 可选的标签，必须与用于存储/设置地面/墙壁状态的地图视图组件相关联。默认为 "WallFloor"。
         /// </param>
         public RectangleGenerator(string? wallFloorComponentTag = "WallFloor")
         {

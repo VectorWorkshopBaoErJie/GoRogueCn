@@ -7,43 +7,41 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.MapGeneration.Steps
 {
     /// <summary>
-    /// Finds the locations of open walls in rectangular rooms that constitute doorways.
+    /// 查找构成门道的矩形房间中开放墙壁的位置。
     /// </summary>
     [PublicAPI]
     public class DoorFinder : GenerationStep
     {
         /// <summary>
-        /// Optional tag that must be associated with the grid view used to find openings in room walls.
+        /// 必须与用于查找房间墙壁开口的网格视图相关联的可选标签。
         /// </summary>
         public readonly string? WallFloorComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component used to store rectangular rooms that it generates
-        /// door locations for.
+        /// 可选标签，必须与用于存储它所生成门位置的矩形房间的组件相关联。
         /// </summary>
         public readonly string? RoomsComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component created/used to record the door locations found by
-        /// this algorithm.
+        /// 可选标签，必须与创建/用于记录此算法找到的门位置的组件相关联。
         /// </summary>
         public readonly string? DoorsListComponentTag;
 
         /// <summary>
-        /// Creates a door finder generation step.
+        /// 创建一个寻门生成步骤。
         /// </summary>
-        /// <param name="name">The name of the generation step.  Defaults to <see cref="DoorFinder"/></param>
+        /// <param name="name">生成步骤的名称。默认为 <see cref="DoorFinder"/></param>
         /// <param name="wallFloorComponentTag">
-        /// Optional tag that must be associated with the grid view used to find whether room walls are open.
-        /// Defaults to "WallFloor".
+        /// 可选标签，必须与用于查找房间墙壁是否开放的网格视图相关联。
+        /// 默认为 "WallFloor"。
         /// </param>
         /// <param name="roomsComponentTag">
-        /// Optional tag that must be associated with the component used to store the rectangular rooms this algorithm
-        /// finds openings for.  Defaults to "Rooms".
+        /// 可选标签，必须与用于存储此算法为其查找开口的矩形房间的组件相关联。
+        /// 默认为 "Rooms"。
         /// </param>
         /// <param name="doorsListComponentTag">
-        /// Optional tag that must be associated with the component created/used to record the door locations found
-        /// by this algorithm.  Defaults to "Doors".
+        /// 可选标签，必须与创建/用于记录此算法找到的门位置的组件相关联。
+        /// 默认为 "Doors"。
         /// </param>
         public DoorFinder(string? name = null, string? wallFloorComponentTag = "WallFloor",
                           string? roomsComponentTag = "Rooms", string? doorsListComponentTag = "Doors")

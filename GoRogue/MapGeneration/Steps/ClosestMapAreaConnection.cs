@@ -10,9 +10,8 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.MapGeneration.Steps
 {
     /// <summary>
-    /// Connects areas of the map by connecting each area to its closest neighboring area, with distance between areas based on
-    /// the connection point selector specified.
-    /// Context Components Required:
+    /// 通过将每个区域连接到其最近的相邻区域来连接地图上的区域，区域之间的距离基于指定的连接点选择器来确定。
+    /// 所需的上下文组件：
     /// <list type="table">
     ///     <listheader>
     ///         <term>Component</term>
@@ -42,78 +41,67 @@ namespace GoRogue.MapGeneration.Steps
     ///         <description>"Tunnels"</description>
     ///     </item>
     /// </list>
-    /// In the case of the tunnels component, an existing component is used if an appropriate one is present; a new one is
-    /// added if not.
+    /// 对于隧道组件，如果存在合适的组件，则使用现有组件；否则，将添加一个新组件。
     /// </summary>
     /// <remarks>
-    /// This generation steps takes as input a <see cref="ItemList{Area}" /> context component (with the tag "Areas", by
-    /// default) containing areas to connect, and "WallFloor" map view context component
-    /// that indicates wall/floor status for each location on the map.  It then connects the map areas in the list, generating
-    /// tunnels in the process.  Each location comprising
-    /// the generated tunnels is set to "true" in the "WallFloor" component.  Additionally, an <see cref="SadRogue.Primitives.Area" /> representing
-    /// each tunnel created is added to the <see cref="ItemList{Area}" /> context
-    /// component (with the tag "Tunnels", by default).
-    /// If an appropriate component with the specified tag exists for the resulting tunnels, the Areas are added to that
-    /// component.  Otherwise, a new component is created.
-    /// Areas are connected by drawing a tunnel between each Area and its closest neighboring area, based on distance
-    /// between the points selected by the given <see cref="ConnectionPointSelector"/>.  The actual points selected in
-    /// each area to connect, as well as the method for drawing tunnels between those areas, is customizable via the
-    /// <see cref="ConnectionPointSelector" /> and <see cref="TunnelCreator" /> parameters.
+    /// 此生成步骤的输入是一个带有“Areas”标签（默认）的<see cref="ItemList{Area}" />上下文组件，其中包含要连接的区域，
+    /// 以及一个“WallFloor”地图视图上下文组件，该组件指示地图上每个位置的墙壁/地板状态。
+    /// 然后，它会连接列表中的地图区域，并在此过程中生成隧道。在“WallFloor”组件中，构成生成隧道的每个位置都设置为“true”。
+    /// 此外，代表每个创建的隧道的<see cref="SadRogue.Primitives.Area" />会被添加到带有“Tunnels”标签（默认）的
+    /// <see cref="ItemList{Area}" />上下文组件中。
+    /// 如果为结果隧道存在具有指定标签的合适组件，则将这些区域添加到该组件中。否则，将创建一个新组件。
+    /// 区域之间通过在每个区域与其最近的相邻区域之间绘制隧道来连接，基于给定<see cref="ConnectionPointSelector"/>选择的点之间的距离。
+    /// 在每个区域中选择的实际连接点，以及在这些区域之间绘制隧道的方法，都可以通过<see cref="ConnectionPointSelector" />
+    /// 和<see cref="TunnelCreator" />参数进行自定义。
     /// </remarks>
     [PublicAPI]
     public class ClosestMapAreaConnection : GenerationStep
     {
         /// <summary>
-        /// Optional tag that must be associated with the component used to store map areas connected by this algorithm.
+        /// 可选的标签，必须与用于存储此算法连接的地图区域的组件相关联。
         /// </summary>
         public readonly string? AreasComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component created/used to store the tunnels created by this connection
-        /// method.
+        /// 可选的标签，必须与创建/用于存储此连接方法创建的隧道的组件相关联。
         /// </summary>
         public readonly string? TunnelsComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component used to set wall/floor status of tiles changed by this
-        /// algorithm.
+        /// 可选的标签，必须与用于设置此算法更改的瓦片的墙壁/地板状态的组件相关联。
         /// </summary>
         public readonly string? WallFloorComponentTag;
 
         /// <summary>
-        /// The area connection strategy to use. Not all methods function on maps with concave areas
-        /// -- see respective class documentation for details.
+        /// 要使用的区域连接策略。并非所有方法都适用于具有凹形区域的地图
+        /// -- 详见相应类文档以获取详细信息。
         /// </summary>
         public IConnectionPointSelector ConnectionPointSelector = new RandomConnectionPointSelector();
 
         /// <summary>
-        /// The distance calculation that defines distance/neighbors.
+        /// 定义距离/邻居的距离计算方式。
         /// </summary>
         public Distance DistanceCalc = Distance.Manhattan;
 
         /// <summary>
-        /// The tunnel creation strategy to use. Defaults to <see cref="DirectLineTunnelCreator" /> with
-        /// the cardinal adjacency rules.
+        /// 要使用的隧道创建策略。默认为使用基本邻接规则的<see cref="DirectLineTunnelCreator" />。
         /// </summary>
         public ITunnelCreator TunnelCreator = new DirectLineTunnelCreator(Distance.Manhattan);
 
         private List<MultiArea>? _multiAreas;
 
         /// <summary>
-        /// Creates a new closest area connection step.
+        /// 创建一个新的最近区域连接步骤。
         /// </summary>
-        /// <param name="name">>The name of the generation step.  Defaults to <see cref="ClosestMapAreaConnection" />.</param>
+        /// <param name="name">生成步骤的名称。默认为<see cref="ClosestMapAreaConnection" />。</param>
         /// <param name="wallFloorComponentTag">
-        /// Optional tag that must be associated with the map view component used to store/set
-        /// floor/wall status.  Defaults to "WallFloor".
+        /// 可选的标签，必须与用于存储/设置地板/墙壁状态的地图视图组件相关联。默认为"WallFloor"。
         /// </param>
         /// <param name="areasComponentTag">
-        /// Optional tag that must be associated with the component used to store map areas
-        /// connected by this algorithm.  Defaults to "Areas".
+        /// 可选的标签，必须与用于存储此算法连接的地图区域的组件相关联。默认为"Areas"。
         /// </param>
         /// <param name="tunnelsComponentTag">
-        /// Optional tag that must be associated with the component created/used to store the
-        /// tunnels created by this connection method.  Defaults to "Tunnels".
+        /// 可选的标签，必须与创建/用于存储此连接方法创建的隧道的组件相关联。默认为"Tunnels"。
         /// </param>
         public ClosestMapAreaConnection(string? name = null, string? wallFloorComponentTag = "WallFloor",
                                         string? areasComponentTag = "Areas", string? tunnelsComponentTag = "Tunnels")
@@ -165,8 +153,7 @@ namespace GoRogue.MapGeneration.Steps
 
         private void DSOnSetsJoined(object? sender, JoinedEventArgs e)
         {
-            // Can ignore the nullability mismatch because the event handler is only used from OnPerform, after
-            // multiAreas is initialized.
+            // 可以忽略可空性不匹配，因为事件处理程序仅在multiAreas初始化后在OnPerform中使用。
             _multiAreas![e.LargerSetID].AddRange(_multiAreas![e.SmallerSetID].SubAreas);
         }
 

@@ -4,13 +4,13 @@ using SadRogue.Primitives;
 namespace GoRogue.MapGeneration
 {
     /// <summary>
-    /// A interface adding onto IReadOnlyArea, intended to represent an area consisting of multiple other areas.
-    /// Exposes a <see cref="SubAreas"/> field which lists the constituent areas.
+    /// 一个扩展自IReadOnlyArea的接口，旨在表示由多个其他区域组成的区域。
+    /// 公开一个<see cref="SubAreas"/>字段，该字段列出了组成区域。
     /// </summary>
     public interface IReadOnlyMultiArea : IReadOnlyArea
     {
         /// <summary>
-        /// List of all sub-areas in the MultiArea.
+        /// MultiArea中的所有子区域的列表。
         /// </summary>
         IReadOnlyList<IReadOnlyArea> SubAreas { get; }
     }

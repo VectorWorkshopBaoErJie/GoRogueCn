@@ -9,8 +9,8 @@ using ShaiRandom.Generators;
 namespace GoRogue.MapGeneration.TunnelCreators
 {
     /// <summary>
-    /// Implements a tunnel creation algorithm that creates a tunnel that performs all needed
-    /// vertical movement before horizontal movement, or vice versa (depending on rng).
+    /// 实现了一个隧道创建算法，该算法创建的隧道会先进行所有必要的垂直移动，然后再进行水平移动，
+    /// 或者反过来（取决于随机数生成器）。
     /// </summary>
     [PublicAPI]
     public class HorizontalVerticalTunnelCreator : ITunnelCreator
@@ -18,9 +18,9 @@ namespace GoRogue.MapGeneration.TunnelCreators
         private readonly IEnhancedRandom _rng;
 
         /// <summary>
-        /// Creates a new tunnel creator.
+        /// 创建一个新的隧道生成器。
         /// </summary>
-        /// <param name="rng">RNG to use for movement selection.</param>
+        /// <param name="rng">用于移动选择的随机数生成器。</param>
         public HorizontalVerticalTunnelCreator(IEnhancedRandom? rng = null) => _rng = rng ?? GlobalRandom.DefaultRNG;
 
         /// <inheritdoc />

@@ -10,26 +10,26 @@ using SadRogue.Primitives.PointHashers;
 namespace GoRogue.MapGeneration
 {
     /// <summary>
-    /// An area with an arbitrary number of sides and corners
+    /// 一个具有任意边和角数量的区域
     /// </summary>
     [PublicAPI]
     public class PolygonArea : IReadOnlyArea, IMatchable<PolygonArea>
     {
         #region Properties/Fields
         /// <summary>
-        /// The corners of this polygon
+        /// 此多边形的顶点
         /// </summary>
         public IReadOnlyList<Point> Corners => _corners.AsReadOnly();
         private readonly List<Point> _corners;
 
         /// <summary>
-        /// The exterior points of the polygon
+        /// 多边形的外部点
         /// </summary>
         public IReadOnlyMultiArea OuterPoints => _outerPoints;
         private readonly MultiArea _outerPoints;
 
         /// <summary>
-        /// The interior points of the polygon
+        /// 多边形的内部点
         /// </summary>
         public IReadOnlyArea InnerPoints => _innerPoints;
         private readonly Area _innerPoints;
@@ -37,7 +37,7 @@ namespace GoRogue.MapGeneration
         private readonly MultiArea _points;
 
         /// <summary>
-        /// Which Line-Drawing algorithm to use
+        /// 使用哪种线条绘制算法
         /// </summary>
         public readonly Lines.Algorithm LineAlgorithm;
 
@@ -54,50 +54,50 @@ namespace GoRogue.MapGeneration
         public Point this[int index] => _points[index];
 
         /// <summary>
-        /// The left-most X-value of the Polygon
+        /// 多边形的最左侧X值
         /// </summary>
         public int Left => Bounds.MinExtentX;
 
         /// <summary>
-        /// The right-most X-value of the Polygon
+        /// 多边形的最右侧X值
         /// </summary>
         public int Right => Bounds.MaxExtentX;
 
         /// <summary>
-        /// The top-most Y-value of the Polygon
+        /// 多边形的最顶部Y值
         /// </summary>
         public int Top => Direction.YIncreasesUpward ? Bounds.MaxExtentY : Bounds.MinExtentY;
 
         /// <summary>
-        /// The bottom-most Y-value of the Polygon
+        ///多边形的最底部Y值
         /// </summary>
         public int Bottom => Direction.YIncreasesUpward ? Bounds.MinExtentY : Bounds.MaxExtentY;
 
         /// <summary>
-        /// How Wide this Polygon is
+        /// 这个多边形有多宽
         /// </summary>
         public int Width => Bounds.Width;
 
         /// <summary>
-        /// how tall this Polygon is
+        /// 这个多边形有多高
         /// </summary>
         public int Height => Bounds.Height;
 
         /// <summary>
-        /// The Center point of this Polygon
+        /// 这个多边形的中心点
         /// </summary>
-        /// <remarks>There is no guarantee that the center point lies within the polygon</remarks>
+        /// <remarks>不保证中心点位于多边形内部</remarks>
         public Point Center => Bounds.Center;
 
         /// <summary>
-        /// Returns true if the position provided is a corner of this polygon
+        /// 如果提供的位置是这个多边形的一个角，则返回true
         /// </summary>
-        /// <param name="position"></param>
-        /// <returns></returns>
+        /// <param name="position">位置</param>
+        /// <returns>布尔值</returns>
         public bool IsCorner(Point position) => Corners.Contains(position);
 
         /// <summary>
-        /// Returns a string detailing the region's corner locations.
+        /// 返回一个描述区域角点位置的字符串。
         /// </summary>
         public override string ToString()
         {
@@ -110,37 +110,37 @@ namespace GoRogue.MapGeneration
 
         #region Constructors
         /// <summary>
-        /// Creates a new Polygon, with corners at the provided points
+        /// 使用提供的点作为角点创建一个新的多边形
         /// </summary>
-        /// <param name="corners">Each corner of the polygon, which is copied into a new list</param>
-        /// <param name="algorithm">Which Line Algorithm to use</param>
-        /// <exception cref="ArgumentException">Must have 3 or more corners; Algorithm must produce ordered lines.</exception>
+        /// <param name="corners">多边形的每个角点，这些点将被复制到一个新列表中</param>
+        /// <param name="algorithm">使用哪种线算法</param>
+        /// <exception cref="ArgumentException">必须有3个或更多角点；算法必须产生有序的线段。</exception>
         public PolygonArea(IEnumerable<Point> corners, Lines.Algorithm algorithm = Lines.Algorithm.Bresenham)
             : this(corners.ToList(), algorithm) { }
 
         /// <summary>
-        /// Creates a new Polygon, with corners at the provided points
+        /// 使用提供的点作为角点创建一个新的多边形
         /// </summary>
-        /// <param name="corners">The corners of this polygon</param>
-        /// <param name="algorithm">Which Line Algorithm to use</param>
-        /// <exception cref="ArgumentException">Must have 3 or more corners; Algorithm must produce ordered lines.</exception>
+        /// <param name="corners">这个多边形的角点</param>
+        /// <param name="algorithm">使用哪种线算法</param>
+        /// <exception cref="ArgumentException">必须有3个或更多角点；算法必须产生有序的线段。</exception>
         public PolygonArea(ref List<Point> corners, Lines.Algorithm algorithm = Lines.Algorithm.Bresenham)
             : this(corners, algorithm) { }
 
         /// <summary>
-        /// Returns a new PolygonArea with corners at the provided points.
+        /// 返回一个新的多边形区域，其角点位于提供的点上。
         /// </summary>
-        /// <param name="algorithm">Which Line-drawing algorithm to use</param>
-        /// <param name="corners">The points which are corners for this polygon</param>
-        /// <exception cref="ArgumentException">Must have 3 or more corners; Algorithm must produce ordered lines.</exception>
+        /// <param name="algorithm">使用哪种画线算法</param>
+        /// <param name="corners">这个多边形的角点</param>
+        /// <exception cref="ArgumentException">必须有3个或更多角点；算法必须产生有序的线段。</exception>
         public PolygonArea(Lines.Algorithm algorithm, params Point[] corners)
             : this(corners, algorithm) { }
 
         /// <summary>
-        /// Returns a new polygon with corners at the provided points, using the algorithm DDA to produce lines
+        /// 使用DDA算法生成线段，并返回一个新多边形，其角点位于提供的点上
         /// </summary>
-        /// <param name="corners">The corners of the polygon</param>
-        /// <exception cref="ArgumentException">Must have 3 or more corners; Algorithm must produce ordered lines.</exception>
+        /// <param name="corners">多边形的角点</param>
+        /// <exception cref="ArgumentException">必须有3个或更多角点；算法必须产生有序的线段。</exception>
         public PolygonArea(params Point[] corners) : this(corners, Lines.Algorithm.Bresenham) { }
 
         private PolygonArea(List<Point> corners, Lines.Algorithm algorithm)
@@ -171,61 +171,55 @@ namespace GoRogue.MapGeneration
                 throw new ArgumentException("Polygons must have 3 or more sides to be representable in 2 dimensions");
         }
 
-        // Draws lines from each corner to the next
+        // 从每个角点绘制到下一个角点的线段
         private void DrawFromCorners()
         {
-            // TODO: It may be useful to change the hashing algorithm used by these areas as well since the bounds of each
-            // boundary are known before creation; however the computation does itself take some time; needs testing.
-            // The bulk of the performance gain that is achieved during creation specifically is achieved via caching
-            // outer points in SetInnerPoints anyway.
+            // TODO: 由于在创建之前已知每个边界的范围，因此更改这些区域使用的哈希算法可能也很有用；
+            // 然而，计算本身确实需要一些时间；需要进行测试。
+            // 无论如何，在创建过程中实现的大部分性能提升都是通过SetInnerPoints中缓存外部点来实现的。
             for (int i = 0; i < _corners.Count - 1; i++)
                 _outerPoints.Add(new Area(Lines.GetLine(_corners[i], _corners[i + 1], LineAlgorithm)));
 
             _outerPoints.Add(new Area(Lines.GetLine(_corners[^1], _corners[0], LineAlgorithm)));
         }
 
-        // Uses an odd-even rule to determine whether we are in the area or not and fills InnerPoints accordingly
+        // 使用奇偶规则来确定我们是否在区域内，并相应地填充InnerPoints
         private void SetInnerPoints()
         {
-            // Calculate bounds and cache outer points so that we can efficiently check whether an arbitrary point
-            // is an outer point or not.
+            // 计算边界并缓存外部点，以便我们可以高效地检查任意点是否为外部点。
             var bounds = _outerPoints.Bounds;
             var outerPointsSet =
                 new HashSet<Point>(_outerPoints, new KnownRangeHasher(bounds.MinExtent, bounds.MaxExtent));
 
-            // The top and bottom rows can never contain an inner point, so skip them.
+            // 顶部和底部行永远不可能包含内部点，所以跳过它们。
             for (int y = bounds.MinExtentY + 1; y < bounds.MaxExtentY; y++)
             {
                 var lineIndicesEncountered = new HashSet<int>();
 
-                // Must include MinExtentX so that it can accurately count lines encountered.
-                // Doesn't need MaxExtentX since no inner point can be equal to or greater than that.
+                // 必须包含MinExtentX，以便能够准确计算遇到的线段数量。
+                // 不需要MaxExtentX，因为没有内部点的值可以等于或大于它。
                 for (int x = bounds.MinExtentX; x < bounds.MaxExtentX; x++)
                 {
                     var curPoint = new Point(x, y);
 
-                    // If we find an outer point, we must count it as seen on this y-line
+                    // 如果我们找到一个外部点，我们必须将其计为在此y线上可见
                     if (outerPointsSet.Contains(curPoint))
                     {
-                        // Add all boundary lines that contain the point we've found.  Each point could be part
-                        // of 1 or 2 boundary lines (corners are in 2).  Note however that it is _not_ necessarily
-                        // sufficient to just check if the current point is a corner to know whether it's part of
-                        // only 1 or two, as non-corners could be a part of 2 lines if the angle between two boundaries
-                        // is extremely small (due to imprecision of representing lines on an integral grid).
+                        // 添加包含我们找到的所有边界线段。每个点可能是1或2个边界线段的一部分（角点在2个中）。
+                        // 然而，请注意，仅仅检查当前点是否为角点并不足以知道它是仅属于1个还是2个线段，
+                        // 因为如果两个边界之间的角度极小（由于在线性网格上表示线段的不精确性），非角点也可能属于2个线段。
                         for (int i = 0; i < _outerPoints.SubAreas.Count; i++)
                         {
                             var boundary = _outerPoints.SubAreas[i];
                             if (!boundary.Contains(curPoint)) continue;
 
-                            // We must count the line as encountered IFF it contains a point with a y-value
-                            // less than the current point's y.  By definition of a line, such a point would _have_
-                            // to occur at one of the two ends.
+                            // 当且仅当线段包含一个y值小于当前点y值的点时，我们才必须计算遇到的线段。
+                            // 根据线段的定义，这样的点必须出现在两个端点之一。
                             if (boundary[0].Y < y || boundary[^1].Y < y)
                                 lineIndicesEncountered.Add(i);
                         }
                     }
-                    // Otherwise, a point is an inner point IFF the scan-line has crossed an odd number of outer
-                    // boundaries on its way to the current point
+                    // 否则，一个点是内部点，当且仅当扫描线在到达当前点的过程中穿过了奇数个外部边界
                     else
                     {
                         if (lineIndicesEncountered.Count % 2 == 1)
@@ -238,26 +232,26 @@ namespace GoRogue.MapGeneration
 
         #region Static Creation Methods
         /// <summary>
-        /// Creates a new Polygon from a GoRogue.Rectangle.
+        /// 根据GoRogue.Rectangle创建一个新的多边形。
         /// </summary>
-        /// <param name="rectangle">The rectangle</param>
-        /// <param name="algorithm">Line-drawing algorithm to use for finding boundaries.</param>
-        /// <exception cref="ArgumentException">Must have 3 or more corners; Algorithm must produce ordered lines.</exception>
-        /// <returns>A new Polygon in the shape of a rectangle</returns>
+        /// <param name="rectangle">矩形</param>
+        /// <param name="algorithm">用于查找边界的线段绘制算法。</param>
+        /// <exception cref="ArgumentException">必须有3个或更多角；算法必须产生有序的线段。</exception>
+        /// <returns>一个矩形形状的新多边形</returns>
         public static PolygonArea Rectangle(Rectangle rectangle, Lines.Algorithm algorithm = Lines.Algorithm.Bresenham)
             => new PolygonArea(algorithm, rectangle.MinExtent, (rectangle.MaxExtentX, rectangle.MinExtentY), rectangle.MaxExtent,
                 (rectangle.MinExtentX, rectangle.MaxExtentY));
 
         /// <summary>
-        /// Creates a new Polygon in the shape of a parallelogram.
+        /// 创建一个平行四边形形状的新多边形。
         /// </summary>
-        /// <param name="origin">Origin of the parallelogram.</param>
-        /// <param name="width">Width of the parallelogram.</param>
-        /// <param name="height">Height of the parallelogram.</param>
-        /// <param name="fromTop">Whether the parallelogram extends downward-right or upwards-right from the start</param>
-        /// <param name="algorithm">Line-drawing algorithm to use for finding boundaries.</param>
-        /// <exception cref="ArgumentException">Must have 3 or more corners; Algorithm must produce ordered lines.</exception>
-        /// <returns>A new Polygon in the shape of a parallelogram</returns>
+        /// <param name="origin">平行四边形的起点。</param>
+        /// <param name="width">平行四边形的宽度。</param>
+        /// <param name="height">平行四边形的高度。</param>
+        /// <param name="fromTop">平行四边形是从起点开始向下-右延伸还是向上-右延伸</param>
+        /// <param name="algorithm">用于查找边界的线段绘制算法。</param>
+        /// <exception cref="ArgumentException">必须有3个或更多角；算法必须产生有序的线段。</exception>
+        /// <returns>一个平行四边形形状的新多边形</returns>
         public static PolygonArea Parallelogram(Point origin, int width, int height, bool fromTop = false,
                                                 Lines.Algorithm algorithm = Lines.Algorithm.Bresenham)
         {
@@ -277,13 +271,13 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Creates a polygon whose sides are even-length
+        /// 创建一个各边等长的多边形
         /// </summary>
-        /// <param name="center">The center point of this polygon</param>
-        /// <param name="numberOfSides">Number of sides and corners on this polygon</param>
-        /// <param name="radius">The desired distance between the center and each corner</param>
-        /// <exception cref="ArgumentException">Must have 3 or more corners; Algorithm must produce ordered lines.</exception>
-        /// <param name="algorithm">Which line-drawing algorithm to use</param>
+        /// <param name="center">这个多边形的中心点</param>
+        /// <param name="numberOfSides">这个多边形上的边和角的数量</param>
+        /// <param name="radius">中心点到每个角的期望距离</param>
+        /// <exception cref="ArgumentException">必须有3个或更多的角；算法必须产生有序的线段。</exception>
+        /// <param name="algorithm">使用哪种线段绘制算法</param>
         /// <returns></returns>
         public static PolygonArea RegularPolygon(Point center, int numberOfSides, double radius, Lines.Algorithm algorithm = Lines.Algorithm.Bresenham)
         {
@@ -304,14 +298,14 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Creates a new star-shaped polygon
+        /// 创建一个新的星形多边形
         /// </summary>
-        /// <param name="center">The center point of the star</param>
-        /// <param name="points">How many points this star has</param>
-        /// <param name="outerRadius">The distance between the center and a tip of the star</param>
-        /// <param name="innerRadius">The distance between the center and an armpit of the star</param>
-        /// <param name="algorithm">Which line-drawing algorithm to use</param>
-        /// <exception cref="ArgumentException">Stars must have 3 or more points; algorithm must be ordered; inner and outer radius must be positive</exception>
+        /// <param name="center">星形的中心点</param>
+        /// <param name="points">这个星形有多少个顶点</param>
+        /// <param name="outerRadius">中心点到星形尖端的距离</param>
+        /// <param name="innerRadius">中心点到星形凹点（腋窝处）的距离</param>
+        /// <param name="algorithm">使用哪种线段绘制算法</param>
+        /// <exception cref="ArgumentException">星形必须拥有3个或更多的顶点；算法必须是有序的；内半径和外半径必须是正数</exception>
         public static PolygonArea RegularStar(Point center, int points, double outerRadius, double innerRadius,
                                               Lines.Algorithm algorithm = Lines.Algorithm.Bresenham)
         {
@@ -370,20 +364,19 @@ namespace GoRogue.MapGeneration
         #region IMatchable Implementation
 
         /// <summary>
-        /// Compares the polygons to ensure that they are defined by the same corners, and thus represent the same area.
+        /// 比较多边形以确保它们由相同的角定义，从而表示相同的区域。
         /// </summary>
-        /// <param name="other"/>
-        /// <returns>True if the polygons represent the same area; false otherwise.</returns>
+        /// <param name="other">要比较的另一个多边形</param>
+        /// <returns>如果多边形表示相同的区域，则为True；否则为false。</returns>
         public bool Matches(PolygonArea? other)
         {
             if (other is null) return false;
             if (other.Corners.Count != Corners.Count) return false;
 
-            // Find starting points.  Note:
-            //    - Each corner can occur in the Corners list exactly once to fit the definition of a closed
-            //      polygon
-            //    - Two polygons are equivalent if they contain precisely the same corners in the same order,
-            //      BUT the starting point is independent
+            // 寻找起始点。注意：
+            //    - 每个角点在Corners列表中只能出现一次，以符合闭合多边形的定义
+            //    - 如果两个多边形包含完全相同且顺序一致的角点，则它们是等价的，
+            //      但是起始点是独立的
             //        - [(0, 1), (5, 0), (1, 2)] == [(5, 0), (1, 2), (0, 1)]
             //        - [(0, 1), (5, 0), (1, 2)] != [(5, 0), (0, 1), (1, 2)]
             Point start = Corners[0];
@@ -398,10 +391,9 @@ namespace GoRogue.MapGeneration
 
             if (otherStartIdx == -1) return false;
 
-            // Compare from starting point to make sure order is valid. The starting point for thisIdx does NOT need
-            // modulo, because size must be at least 3 to have a valid polygon.  Similarly, we know that the two corner
-            // lists are the same length, so we can simply increment thisIdx by 1 and guarantee it won't run into an
-            // out of range index.
+            // 从起始点开始比较以确保顺序有效。thisIdx的起始点不需要取模，
+            // 因为要构成一个有效的多边形，大小必须至少为3。同样，我们知道两个角点列表的长度是相同的，
+            // 所以我们可以简单地将thisIdx增加1，并保证它不会超出索引范围。
             int thisIdx = 1;
             for (int otherIdx = (otherStartIdx + 1) % size; otherIdx != otherStartIdx; otherIdx = (otherIdx + 1) % size)
             {
@@ -416,19 +408,19 @@ namespace GoRogue.MapGeneration
         #region Transformation
 
         /// <summary>
-        /// Moves the Polygon in the indicated direction.
+        /// 将多边形向指定方向移动。
         /// </summary>
-        /// <param name="dx">The X-value by which to shift</param>
-        /// <param name="dy">The Y-value by which to shift</param>
+        /// <param name="dx">要沿X轴移动的值</param>
+        /// <param name="dy">要沿Y轴移动的值</param>
         /// <returns></returns>
         public PolygonArea Translate(int dx, int dy)
             => Translate(new Point(dx, dy));
 
         /// <summary>
-        /// Moves the Polygon in the indicated direction.
+        /// 将多边形向指定方向移动。
         /// </summary>
-        /// <param name="delta">The amount (X and Y) to translate by.</param>
-        /// <returns>A new, translated PolygonArea</returns>
+        /// <param name="delta">要沿X轴和Y轴移动的量。</param>
+        /// <returns>一个新的、已移动的多边形区域</returns>
         public PolygonArea Translate(Point delta)
         {
             var corners = new List<Point>(_corners.Count);
@@ -441,18 +433,18 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Rotates the Polygon around it's center.
+        /// 围绕中心旋转多边形。
         /// </summary>
-        /// <param name="degrees">The amount of degrees to rotate</param>
-        /// <returns>A new, rotated PolygonArea</returns>
+        /// <param name="degrees">旋转的角度</param>
+        /// <returns>一个新的、已旋转的多边形区域</returns>
         public PolygonArea Rotate(double degrees) => Rotate(degrees, Center);
 
         /// <summary>
-        /// Rotates the Polygon around a point of origin
+        /// 围绕原点旋转多边形
         /// </summary>
-        /// <param name="degrees">The amount of degrees to rotate</param>
-        /// <param name="origin">The Point around which to rotate</param>
-        /// <returns>A new, rotated PolygonArea</returns>
+        /// <param name="degrees">旋转的角度</param>
+        /// <param name="origin">围绕其旋转的点</param>
+        /// <returns>一个新的、已旋转的多边形区域</returns>
         public PolygonArea Rotate(double degrees, Point origin)
         {
             degrees = MathHelpers.WrapAround(degrees, 360);
@@ -467,10 +459,10 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Flip horizontally around an X-axis
+        /// 围绕X轴水平翻转
         /// </summary>
-        /// <param name="x">The value around which to flip.</param>
-        /// <returns>A new, flipped PolygonArea</returns>
+        /// <param name="x">围绕哪个值进行翻转。</param>
+        /// <returns>一个新的、已翻转的多边形区域</returns>
         public PolygonArea FlipHorizontal(int x)
         {
             var corners = new List<Point>(_corners.Count);
@@ -483,9 +475,9 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Flip vertically around a Y-axis
+        /// 围绕Y轴垂直翻转
         /// </summary>
-        /// <param name="y">The value around which to flip.</param>
+        /// <param name="y">围绕哪个值进行翻转。</param>
         public PolygonArea FlipVertical(int y)
         {
             var corners = new List<Point>(_corners.Count);
@@ -498,19 +490,19 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Invert the X and Y values of a Polygon, respective to a diagonal line
+        /// 相对于一条对角线，交换多边形的X和Y值
         /// </summary>
-        /// <param name="x">Any X-value of a point which intersects the line around which to transpose</param>
-        /// <param name="y">Any Y-value of a Point which intersects the line around which to transpose</param>
-        /// <returns>A new PolygonArea</returns>
+        /// <param name="x">与用于转置的对角线相交的任意点的X值</param>
+        /// <param name="y">与用于转置的对角线相交的任意点的Y值</param>
+        /// <returns>一个新的多边形区域</returns>
         public PolygonArea Transpose(int x, int y)
             => Transpose((x, y));
 
         /// <summary>
-        /// Invert the X and Y values of a Polygon, respective to a diagonal line
+        /// 相对于一条对角线，交换多边形的X和Y值
         /// </summary>
-        /// <param name="xy">Any point which intersects the line around which to transpose</param>
-        /// <returns>A new PolygonArea</returns>
+        /// <param name="xy">与用于转置的对角线相交的任意点</param>
+        /// <returns>一个新的多边形区域</returns>
         public PolygonArea Transpose(Point xy)
         {
             var corners = new List<Point>(_corners.Count);

@@ -6,10 +6,9 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.MapGeneration.TunnelCreators
 {
     /// <summary>
-    /// Implements a tunnel creation algorithm that sets as walkable a direct line between the two
-    /// points. In the case that <see cref="SadRogue.Primitives.Distance.Manhattan" /> is being used, the line is calculated via the
-    /// <see cref="SadRogue.Primitives.Lines.Algorithm.Orthogonal" /> algorithm.  Otherwise, the line is calculated using
-    /// <see cref="SadRogue.Primitives.Lines.Algorithm.Bresenham" />.
+    /// 实现了一个隧道创建算法，该算法将两点之间的直线设置为可通行。在使用<see cref="SadRogue.Primitives.Distance.Manhattan" />的情况下，
+    /// 通过<see cref="SadRogue.Primitives.Lines.Algorithm.Orthogonal" />算法计算该直线。否则，使用
+    /// <see cref="SadRogue.Primitives.Lines.Algorithm.Bresenham" />来计算该直线。
     /// </summary>
     [PublicAPI]
     public class DirectLineTunnelCreator : ITunnelCreator
@@ -18,13 +17,13 @@ namespace GoRogue.MapGeneration.TunnelCreators
         private readonly bool _doubleWideVertical;
 
         /// <summary>
-        /// Constructor. Takes the distance calculation to use, which determines whether <see cref="SadRogue.Primitives.Lines.Algorithm.Orthogonal" />
-        /// or <see cref="SadRogue.Primitives.Lines.Algorithm.Bresenham" /> is used to create the tunnel.
+        /// 构造函数。采用要使用的距离计算方式，该方式决定了是使用<see cref="SadRogue.Primitives.Lines.Algorithm.Orthogonal" />
+        /// 还是<see cref="SadRogue.Primitives.Lines.Algorithm.Bresenham" />来创建隧道。
         /// </summary>
         /// <param name="adjacencyRule">
-        /// Method of adjacency to respect when creating tunnels. Cannot be diagonal.
+        /// 创建隧道时要遵守的邻接方法。不能是对角线。
         /// </param>
-        /// <param name="doubleWideVertical">Whether or not to create vertical tunnels as 2-wide.</param>
+        /// <param name="doubleWideVertical">是否将垂直隧道创建为2格宽。</param>
         public DirectLineTunnelCreator(AdjacencyRule adjacencyRule, bool doubleWideVertical = true)
         {
             if (adjacencyRule == AdjacencyRule.Diagonals)

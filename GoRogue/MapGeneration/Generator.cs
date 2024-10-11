@@ -5,38 +5,37 @@ using JetBrains.Annotations;
 namespace GoRogue.MapGeneration
 {
     /// <summary>
-    /// Exception thrown when maximum retries for map generation is reached.
+    /// 当达到地图生成的最大重试次数时抛出的异常。
     /// </summary>
     [PublicAPI]
     public class MapGenerationFailedException : Exception
     {
         /// <summary>
-        /// Creates map gen failed exception with no message.
+        /// 创建没有消息的地图生成失败异常。
         /// </summary>
         public MapGenerationFailedException()
         { }
 
         /// <summary>
-        /// Creates a map gen failed exception with a customized message.
+        /// 使用自定义消息创建地图生成失败异常。
         /// </summary>
-        /// <param name="message" />
+        /// <param name="message">自定义消息。</param>
         public MapGenerationFailedException(string message)
             : base(message)
         { }
 
         /// <summary>
-        /// Creates a map gen failed exception with a customized message an inner exception.
+        /// 使用自定义消息和内部异常创建地图生成失败异常。
         /// </summary>
-        /// <param name="message" />
-        /// <param name="innerException" />
+        /// <param name="message">自定义消息。</param>
+        /// <param name="innerException">内部异常。</param>
         public MapGenerationFailedException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }
 
     /// <summary>
-    /// Map generator that applies a series of <see cref="GenerationStep" /> instances to a
-    /// <see cref="GenerationContext" /> to generate a map.
+    /// 地图生成器，它将一系列<see cref="GenerationStep"/>实例应用于<see cref="GenerationContext"/>以生成地图。
     /// </summary>
     [PublicAPI]
     public class Generator
@@ -44,15 +43,15 @@ namespace GoRogue.MapGeneration
         private readonly List<GenerationStep> _generationSteps;
 
         /// <summary>
-        /// Context for the map this <see cref="Generator" /> is generating.
+        /// 此<see cref="Generator"/>正在生成的地图的上下文。
         /// </summary>
         public readonly GenerationContext Context;
 
         /// <summary>
-        /// Creates a generator that will be used to generate a map of the given width/height.
+        /// 创建一个生成器，该生成器将用于生成给定宽/高的地图。
         /// </summary>
-        /// <param name="width">Width of the generated map.</param>
-        /// <param name="height">Height of the generated map.</param>
+        /// <param name="width">生成的地图的宽度。</param>
+        /// <param name="height">生成的地图的高度。</param>
         public Generator(int width, int height)
         {
             Context = new GenerationContext(width, height);
@@ -60,16 +59,16 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Steps used to generate the map.
+        /// 用于生成地图的步骤。
         /// </summary>
         public IReadOnlyList<GenerationStep> GenerationSteps => _generationSteps.AsReadOnly();
 
         /// <summary>
-        /// Adds a component to the context this generator is applying generation steps to.
+        /// 向此生成器应用生成步骤的上下文中添加一个组件。
         /// </summary>
-        /// <param name="component">Component to add to the map context.</param>
-        /// <param name="tag">An optional tag to give the component.  Defaults to no tag.</param>
-        /// <returns>This generator (for chaining).</returns>
+        /// <param name="component">要添加到地图上下文的组件。</param>
+        /// <param name="tag">要给组件的可选标签。默认为无标签。</param>
+        /// <returns>此生成器（用于链式调用）。</returns>
         public Generator AddComponent(object component, string? tag = null)
         {
             Context.Add(component, tag);
@@ -77,10 +76,10 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Adds a generation step.  Steps are executed in the order they are added.
+        /// 添加一个生成步骤。步骤将按照添加的顺序执行。
         /// </summary>
-        /// <param name="step">The generation step to add.</param>
-        /// <returns>This generator (for chaining).</returns>
+        /// <param name="step">要添加的生成步骤。</param>
+        /// <returns>此生成器（用于链式调用）。</returns>
         public Generator AddStep(GenerationStep step)
         {
             _generationSteps.Add(step);
@@ -88,17 +87,17 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Adds the given generation steps.  Steps are executed in the order they are added.
+        /// 添加给定的生成步骤。步骤将按照添加的顺序执行。
         /// </summary>
-        /// <param name="steps">The generation steps to add.</param>
-        /// <returns>This generator (for chaining).</returns>
+        /// <param name="steps">要添加的生成步骤。</param>
+        /// <returns>此生成器（用于链式调用）。</returns>
         public Generator AddSteps(params GenerationStep[] steps) => AddSteps((IEnumerable<GenerationStep>)steps);
 
         /// <summary>
-        /// Adds the given generation steps.  Steps are executed in the order they are added.
+        /// 添加给定的生成步骤。步骤将按照添加的顺序执行。
         /// </summary>
-        /// <param name="steps">The generation steps to add.</param>
-        /// <returns>This generator (for chaining).</returns>
+        /// <param name="steps">要添加的生成步骤。</param>
+        /// <returns>此生成器（用于链式调用）。</returns>
         public Generator AddSteps(IEnumerable<GenerationStep> steps)
         {
             _generationSteps.AddRange(steps);
@@ -106,7 +105,7 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Clears the context and generation steps, resetting the generator back to a pre-configured state.
+        /// 清除上下文和生成步骤，将生成器重置回预先配置的状态。
         /// </summary>
         public void Clear()
         {
@@ -115,17 +114,14 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Applies the generation steps added, in the order in which they were added, to the <see cref="Context" /> to
-        /// generate the map.  If you want to automatically handle <see cref="RegenerateMapException"/>, call
-        /// <see cref="ConfigAndGenerateSafe"/> instead.
+        /// 按照添加的顺序应用已添加的生成步骤到<see cref="Context"/>以生成地图。如果你想要自动处理<see cref="RegenerateMapException"/>，请调用
+        /// <see cref="ConfigAndGenerateSafe"/>。
         /// </summary>
         /// <remarks>
-        /// Depending on the generation steps used, this function may throw RegenerateMapException if it detects
-        /// that the map generated does not meet invariants due to RNG, in which case the map generation will need
-        /// to be performed again.  See <see cref="ConfigAndGenerateSafe"/> for a method of ensuring this happens
-        /// in a convenient way.
+        /// 根据所使用的生成步骤，如果此函数检测到由于RNG（随机数生成器）导致生成的地图不满足不变量，它可能会抛出RegenerateMapException，
+        /// 在这种情况下，将需要再次执行地图生成。请参阅<see cref="ConfigAndGenerateSafe"/>，了解一种确保以方便的方式实现这一点的方法。
         /// </remarks>
-        /// <returns>This generator (for chaining).</returns>
+        /// <returns>此生成器（用于链式调用）。</returns>
         public Generator Generate()
         {
             foreach (var step in _generationSteps)
@@ -135,22 +131,18 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Calls the <paramref name="generatorConfig"/> function to add components/steps to the generator, then calls
-        /// <see cref="Generate"/>.  If a <see cref="RegenerateMapException"/> is thrown, re-generates the map by
-        /// calling the configure function then generate again, up to the maximum retries specified.
+        /// 调用<paramref name="generatorConfig"/>函数以向生成器中添加组件/步骤，然后调用<see cref="Generate"/>。
+        /// 如果抛出<see cref="RegenerateMapException"/>，则通过再次调用配置函数然后重新生成，直到达到指定的最大重试次数来重新生成地图。
         /// </summary>
         /// <remarks>
-        /// This is a safe wrapper to work with generation procedures that can get themselves into an invalid state
-        /// that requires re-generating the entire map.  Generation steps are clearly marked in documentation if they
-        /// can produce such states.
+        /// 这是一个安全的包装器，用于处理可能使自身陷入无效状态并需要重新生成整个地图的生成过程。
+        /// 如果生成步骤能产生这样的状态，那么文档中会有明确的标记。
         ///
-        /// Ensure you do NOT create/use an RNG with a static seed within this function, as it could easily create
-        /// an infinite loop (that would re-generate the same invalid map over and over).
+        /// 确保不要在此函数内创建/使用具有静态种子的RNG（随机数生成器），因为它很容易创建一个无限循环（即反复重新生成相同的无效地图）。
         /// </remarks>
-        /// <param name="generatorConfig">Function to configure the generator.</param>
-        /// <param name="maxAttempts">Maximum times to attempt map generation, before throwing a MapGenerationFailed
-        /// exception.  Defaults to infinite.</param>
-        /// <returns>This generator (for chaining).</returns>
+        /// <param name="generatorConfig">用于配置生成器的函数。</param>
+        /// <param name="maxAttempts">在抛出MapGenerationFailed异常之前，尝试生成地图的最大次数。默认为无限次。</param>
+        /// <returns>此生成器（用于链式调用）。</returns>
         public Generator ConfigAndGenerateSafe(Action<Generator> generatorConfig, int maxAttempts = -1)
         {
             int currentAttempts = 0;
@@ -176,24 +168,19 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Returns an enumerator that, when evaluated to completion, performs each stage sequentially (as defined
-        /// by the generation steps in their implementation); one stage per MoveNext call.
-        /// Typically you will want to use <see cref="Generate"/> instead.  If you want to automatically handle
-        /// <see cref="RegenerateMapException"/>, call <see cref="ConfigAndGetStageEnumeratorSafe"/> or
-        /// <see cref="ConfigAndGenerateSafe"/> instead as applicable.
+        /// 返回一个枚举器，当评估完成时，它会按顺序执行每个阶段（由生成步骤在其实现中定义）；每次MoveNext调用执行一个阶段。
+        /// 通常，您会希望使用<see cref="Generate"/>代替。如果您想自动处理<see cref="RegenerateMapException"/>，
+        /// 请根据适用情况调用<see cref="ConfigAndGetStageEnumeratorSafe"/>或<see cref="ConfigAndGenerateSafe"/>。
         /// </summary>
         /// <remarks>
-        /// For traditional cases, you will want to call the <see cref="Generate"/> function which simply completes
-        /// all steps.  However, if you want to visually examine each stage of the generation algorithm, you can call
-        /// this function, then call the resulting enumerator's MoveNext function each time you want to complete a
-        /// stage.  This can be useful for demonstration purposes and debugging.
+        /// 对于传统情况，您将希望调用<see cref="Generate"/>函数，它简单地完成所有步骤。但是，如果您想直观地检查生成算法的每个阶段，
+        /// 您可以调用此函数，然后每次想要完成一个阶段时，调用返回的枚举器的MoveNext函数。这对于演示目的和调试可能很有用。
         ///
-        /// Note that a <see cref="RegenerateMapException"/> may be raised during this iteration, and it must be handled
-        /// manually.  See <see cref="ConfigAndGetStageEnumeratorSafe"/>  for a method of handling this automatically.
+        /// 请注意，在此迭代期间可能会引发<see cref="RegenerateMapException"/>，必须手动处理它。
+        /// 请参阅<see cref="ConfigAndGetStageEnumeratorSafe"/>以了解自动处理此问题的方法。
         /// </remarks>
         /// <returns>
-        /// An enumerator that will complete a stage of the generation step each time its MoveNext function
-        /// is called.
+        /// 一个枚举器，每次调用其MoveNext函数时，都会完成一个生成步骤的阶段。
         /// </returns>
         public IEnumerator<object?> GetStageEnumerator()
         {
@@ -211,23 +198,18 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Calls the <paramref name="generatorConfig"/> function to add components/steps to the generator, then calls
-        /// <see cref="GetStageEnumerator"/> and evaluates its enumerator, returning at each step.  Restarts map
-        /// generation automatically if <see cref="RegenerateMapException"/> is thrown. Typically you will want
-        /// to use <see cref="ConfigAndGenerateSafe"/> instead.
+        /// 调用<paramref name="generatorConfig"/>函数以向生成器添加组件/步骤，然后调用<see cref="GetStageEnumerator"/>并评估其枚举器，在每个步骤中返回。
+        /// 如果抛出<see cref="RegenerateMapException"/>，则自动重新开始地图生成。通常，您会希望使用<see cref="ConfigAndGenerateSafe"/>代替。
         /// </summary>
         /// <remarks>
-        /// For traditional cases, you will want to call the <see cref="ConfigAndGenerateSafe"/> function which
-        /// takes the same parameters and simply completes all steps.  However, if you want to visually examine each
-        /// stage of the generation algorithm, you can call this function, then call the resulting enumerator's MoveNext
-        /// function each time you want to complete a stage.  This can be useful for demonstration purposes and debugging.
+        /// 对于传统情况，您将希望调用<see cref="ConfigAndGenerateSafe"/>函数，该函数采用相同的参数并简单地完成所有步骤。
+        /// 但是，如果您想直观地检查生成算法的每个阶段，可以调用此函数，然后每次想要完成一个阶段时，调用返回的枚举器的MoveNext函数。
+        /// 这对于演示目的和调试可能很有用。
         /// </remarks>
-        /// <param name="generatorConfig">Function to configure the generator.</param>
-        /// <param name="maxAttempts">Maximum times to attempt map generation, before throwing a MapGenerationFailed
-        /// exception.  Defaults to infinite.</param>
+        /// <param name="generatorConfig">用于配置生成器的函数。</param>
+        /// <param name="maxAttempts">在抛出MapGenerationFailed异常之前，尝试地图生成的最大次数。默认为无限次。</param>
         /// <returns>
-        /// An enumerator that will complete a stage of the generation step each time its MoveNext function
-        /// is called.
+        /// 一个枚举器，每次调用其MoveNext函数时，都会完成一个生成步骤的阶段。
         /// </returns>
         public IEnumerator<object?> ConfigAndGetStageEnumeratorSafe(Action<Generator> generatorConfig,
                                                                     int maxAttempts = -1)

@@ -5,76 +5,67 @@ using JetBrains.Annotations;
 namespace GoRogue.SenseMapping
 {
     /// <summary>
-    /// Interface for calculating a map representing senses (sound, light, etc), or generally anything
-    /// that can be modeled as sources propagating through a map that has degrees of resistance to spread.
+    /// 用于计算代表感官（声音、光线等）的地图，或通常可以建模为源通过具有不同程度传播阻力的地图传播的任何事物的接口。
     /// </summary>
     /// <remarks>
-    /// If you're looking for an existing implementation of this interface to use, see <see cref="SenseMap"/>.  If you instead want
-    /// to implement your own, you may want to consider using <see cref="SenseMapBase"/> as your base class, as it simplifies the
-    /// implementation considerably.
+    /// 如果您正在寻找此接口的现有实现以供使用，请参阅<see cref="SenseMap"/>。如果您想实现自己的接口，
+    /// 可以考虑使用<see cref="SenseMapBase"/>作为基类，因为它可以大大简化实现。
     /// 
-    /// This interface functions on the concept of having one or more <see cref="ISenseSource"/> instances, which are capable
-    /// of using some algorithm to propagate the source through a map.  The map, and therefore each source, uses a grid view
-    /// of doubles as its map representation, where each double represents the "resistance" that location has to the passing of
-    /// source values through it. The values must be >= 0.0, where 0.0 means that a location has no resistance to spreading of
-    /// source values, and greater values represent greater resistance.  The scale of this resistance is arbitrary, and is
-    /// related to the <see cref="ISenseSource.Intensity" /> of your sources.
+    /// 此接口基于具有一个或多个<see cref="ISenseSource"/>实例的概念，这些实例能够使用某种算法将源传播通过地图。
+    /// 因此，地图和每个源都使用double类型的网格视图作为其地图表示，其中每个double值代表该位置对源值通过的“阻力”。
+    /// 值必须大于等于0.0，其中0.0表示位置对源值的传播没有阻力，而更大的值表示更大的阻力。
+    /// 这个阻力的规模是任意的，并且与您的源的<see cref="ISenseSource.Intensity" />有关。
     ///
-    /// Other than the constraint that 0.0 means a cell has no resistance, the interfaces/APIs themselves impose no strict limitations
-    /// on the definition of the intensity and resistance values.  The default implementations of these interfaces in GoRogue treat
-    /// the resistance view value as a value which is subtracted from source's remaining intensity as they propagate through that cell;
-    /// so as a source spreads through a given location, a value equal to the resistance value of that location is subtracted from the
-    /// source's value (plus the normal fall-of for distance).  However, if some other method is needed, a custom <see cref="ISenseSource"/>
-    /// can be implemented; see that interface's documentation for details.
+    /// 除了0.0表示单元格没有阻力的约束之外，接口/API本身对强度和阻力值的定义没有严格的限制。
+    /// 在GoRogue中，这些接口的默认实现将阻力视图值视为源在通过该单元格传播时从其剩余强度中减去的值；
+    /// 因此，当源通过给定位置传播时，会从源的值中减去等于该位置阻力值的量（加上正常的距离衰减）。
+    /// 但是，如果需要其他方法，可以实现自定义的<see cref="ISenseSource"/>；有关详细信息，请参阅该接口的文档。
     ///
-    /// Generally, usage involves performing and aggregating calculations for all sense sources by calling the <see cref="ISenseMap.Calculate" />
-    /// function, then accessing the results via <see cref="IReadOnlySenseMap.ResultView"/>.  These values will be 0.0 if no source spread to that
-    /// location, and greater than 0.0 to indicate the strength of the combined sources which spread there.
+    /// 通常，使用涉及通过调用<see cref="ISenseMap.Calculate" />函数对所有感官源执行和聚合计算，
+    /// 然后通过<see cref="IReadOnlySenseMap.ResultView"/>访问结果。如果没有源传播到该位置，则这些值将为0.0，
+    /// 而大于0.0的值则表示传播到该位置的组合源的强度。
     /// </remarks>
     [PublicAPI]
     public interface ISenseMap : IReadOnlySenseMap
     {
         /// <summary>
-        /// Fired whenever the SenseMap is recalculated.
+        /// 当SenseMap重新计算时触发。
         /// </summary>
         event EventHandler? Recalculated;
 
         /// <summary>
-        /// Fired when the existing SenseMap is reset prior to calculating a new one.
+        /// 在计算新的SenseMap之前，当现有的SenseMap被重置时触发。
         /// </summary>
         event EventHandler? SenseMapReset;
 
         /// <summary>
-        /// Adds the given source to the list of sources. If the source has its
-        /// <see cref="ISenseSource.Enabled" /> flag set when <see cref="Calculate" /> is next called, then
-        /// it will be counted as a source.
+        /// 将给定的源添加到源列表中。如果在下次调用<see cref="Calculate" />时，
+        /// 该源已设置其<see cref="ISenseSource.Enabled" />标志，那么它将被计为一个源。
         /// </summary>
-        /// <param name="senseSource">The source to add.</param>
+        /// <param name="senseSource">要添加的源。</param>
         void AddSenseSource(ISenseSource senseSource);
 
         /// <summary>
-        /// Removes the given source from the list of sources. Generally, use this if a source is permanently removed
-        /// from a map. For temporary disabling, you should generally use the <see cref="ISenseSource.Enabled" /> flag.
+        /// 从源列表中移除给定的源。通常，如果源从地图中永久移除，则使用此方法。
+        /// 对于临时禁用，通常应使用<see cref="ISenseSource.Enabled" />标志。
         /// </summary>
         /// <remarks>
-        /// The source values that this sense source was responsible for are NOT removed from the sensory output values
-        /// until <see cref="Calculate" /> is next called.
+        /// 在下次调用<see cref="Calculate" />之前，此感官源负责的源值不会从感官输出值中移除。
         /// </remarks>
-        /// <param name="senseSource">The source to remove.</param>
+        /// <param name="senseSource">要移除的源。</param>
         public void RemoveSenseSource(ISenseSource senseSource);
 
         /// <summary>
-        /// Calculates the map.  For each enabled source in the source list, it calculates
-        /// the source's spreading, and puts them all together in the sense map's output.
+        /// 计算地图。对于源列表中的每个已启用的源，它都会计算源的传播，并将它们全部组合在感官地图的输出中。
         /// </summary>
         public void Calculate();
 
         /// <summary>
-        /// Resets the given sense map by erasing the current recorded result values.
+        /// 通过擦除当前记录的结果值来重置给定的感官地图。
         /// </summary>
         /// <remarks>
-        /// After this function is called, any value in <see cref="IReadOnlySenseMap.ResultView"/> will be 0.
-        /// Additionally,<see cref="IReadOnlySenseMap.CurrentSenseMap"/> will be blank.
+        /// 调用此函数后，<see cref="IReadOnlySenseMap.ResultView"/>中的任何值都将为0。
+        /// 此外，<see cref="IReadOnlySenseMap.CurrentSenseMap"/>将为空。
         /// </remarks>
         public void Reset();
     }

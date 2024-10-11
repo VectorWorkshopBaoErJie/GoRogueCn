@@ -5,111 +5,99 @@ using SadRogue.Primitives;
 namespace GoRogue.SenseMapping.Sources
 {
     /// <summary>
-    /// A sense source which performs its spreading calculations by using a recursive shadowcasting algorithm.
+    /// 一种感知源，它使用递归阴影投射算法执行其扩散计算。
     /// </summary>
     /// <remarks>
-    /// Any location on the resistance map which is not _fully_ blocking (eg. has a value less than the source's
-    /// <see cref="ISenseSource.Intensity"/>) is considered to be fully transparent, because this implementation of
-    /// shadow-casting is an on-off algorithm.
+    /// 阻力图上任何非完全阻挡（例如，其值小于源的<see cref="ISenseSource.Intensity"/>）的位置都被视为完全透明，
+    /// 因为此阴影投射实现是一种开关算法。
     ///
-    /// This calculation is faster but obviously doesn't offer support for partial resistance.  It may be useful when you only
-    /// want a rough light approximation, or where your resistance map is on-off anyway.
+    /// 此计算速度更快，但显然不支持部分阻力。当你只需要粗略的光线近似值，或者你的阻力图本身就是开关类型时，它可能很有用。
     /// </remarks>
     [PublicAPI]
     public class RecursiveShadowcastingSenseSource : SenseSourceBase
     {
         /// <summary>
-        /// Creates a source which spreads outwards in all directions.
+        /// 创建一个向所有方向向外扩散的源。
         /// </summary>
-        /// <param name="position">The position on a map that the source is located at.</param>
+        /// <param name="position">源在地图上的位置。</param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是在区域完全无阻碍的情况下，源值将散发的最大距离。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算（或是可隐式转换为<see cref="Distance"/>的类型，例如<see cref="Radius"/>）。
         /// </param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RecursiveShadowcastingSenseSource(Point position, double radius, Distance distanceCalc, double intensity = 1)
             : base(position, radius, distanceCalc, intensity)
         { }
 
         /// <summary>
-        /// Creates a source which spreads outwards in all directions.
+        /// 创建一个向所有方向向外扩散的源。
         /// </summary>
         /// <param name="positionX">
-        /// The X-value of the position on a map that the source is located at.
+        /// 源在地图上位置的X值。
         /// </param>
         /// <param name="positionY">
-        /// The Y-value of the position on a map that the source is located at.
+        /// 源在地图上位置的Y值。
         /// </param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是在区域完全无阻碍的情况下，源值将散发的最大距离。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算（或是可隐式转换为<see cref="Distance"/>的类型，例如<see cref="Radius"/>）。
         /// </param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RecursiveShadowcastingSenseSource(int positionX, int positionY, double radius, Distance distanceCalc, double intensity = 1)
             : base(positionX, positionY, radius, distanceCalc, intensity)
         { }
 
         /// <summary>
-        /// Constructor.  Creates a source which spreads only in a cone defined by the given angle and span.
+        /// 构造函数。创建一个仅在由给定角度和跨度定义的圆锥体内扩散的源。
         /// </summary>
-        /// <param name="position">The position on a map that the source is located at.</param>
+        /// <param name="position">源在地图上的位置。</param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是在区域完全无阻碍的情况下，源值将散发的最大距离。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算方式（或是可隐式转换为<see cref="Distance"/>的类型，例如<see cref="Radius"/>）。
         /// </param>
         /// <param name="angle">
-        /// The angle in degrees that specifies the outermost center point of the cone formed
-        /// by the source's values. 0 degrees points right.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体的最外侧中心点。0度指向右侧。
         /// </param>
         /// <param name="span">
-        /// The angle, in degrees, that specifies the full arc contained in the cone formed by the source's values --
-        /// <paramref name="angle" /> / 2 degrees are included on either side of the cone's center line.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体中包含的完整弧段——
+        /// 圆锥体中心线的两侧各包含<paramref name="angle"/> / 2度。
         /// </param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RecursiveShadowcastingSenseSource(Point position, double radius, Distance distanceCalc, double angle, double span, double intensity = 1)
             : base(position, radius, distanceCalc, angle, span, intensity)
         { }
 
         /// <summary>
-        /// Constructor.  Creates a source which spreads only in a cone defined by the given angle and span.
+        /// 构造函数。创建一个仅在由给定角度和跨度定义的圆锥体内扩散的源。
         /// </summary>
-        /// <param name="positionX">The x-value for the position on a map that the source is located at.</param>
-        /// <param name="positionY">The y-value for the position on a map that the source is located at.</param>
+        /// <param name="positionX">源在地图上所在位置的x值。</param>
+        /// <param name="positionY">源在地图上所在位置的y值。</param>
         /// <param name="radius">
-        /// The maximum radius of the source -- this is the maximum distance the source values will
-        /// emanate, provided the area is completely unobstructed.
+        /// 源的最大半径——这是在区域完全无阻碍的情况下，源值将散发的最大距离。
         /// </param>
         /// <param name="distanceCalc">
-        /// The distance calculation used to determine what shape the radius has (or a type
-        /// implicitly convertible to <see cref="Distance" />, such as <see cref="Radius" />).
+        /// 用于确定半径形状的距离计算方式（或是可隐式转换为<see cref="Distance"/>的类型，例如<see cref="Radius"/>）。
         /// </param>
         /// <param name="angle">
-        /// The angle in degrees that specifies the outermost center point of the cone formed
-        /// by the source's values. 0 degrees points right.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体的最外侧中心点。0度指向右侧。
         /// </param>
         /// <param name="span">
-        /// The angle, in degrees, that specifies the full arc contained in the cone formed by the source's values --
-        /// <paramref name="angle" /> / 2 degrees are included on either side of the cone's center line.
+        /// 以度为单位的角度，该角度指定由源值形成的圆锥体中包含的完整弧段——
+        /// 圆锥体中心线的两侧各包含<paramref name="angle"/> / 2度。
         /// </param>
-        /// <param name="intensity">The starting intensity value of the source. Defaults to 1.0.</param>
+        /// <param name="intensity">源的起始强度值。默认为1.0。</param>
         public RecursiveShadowcastingSenseSource(int positionX, int positionY, double radius, Distance distanceCalc, double angle, double span, double intensity = 1)
             : base(positionX, positionY, radius, distanceCalc, angle, span, intensity)
         { }
 
         /// <summary>
-        /// Performs the spread calculations via recursive shadowcasting.
+        /// 通过递归阴影投射执行扩散计算。
         /// </summary>
         public override void OnCalculate()
         {

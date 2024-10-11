@@ -35,26 +35,26 @@ namespace GoRogue
     }
 
     /// <summary>
-    /// Event arguments for the <see cref="DisjointSet{T}.SetsJoined"/> event.
+    /// <see cref="DisjointSet{T}.SetsJoined"/> 事件的事件参数。
     /// </summary>
     [PublicAPI]
     public class JoinedEventArgs<T> : EventArgs
     {
         /// <summary>
-        /// The larger of the two sets that were joined; becomes the new parent set.
+        /// 两个已连接集合中较大的一个；将成为新的父集合。
         /// </summary>
         public readonly T LargerSet;
 
         /// <summary>
-        /// The smaller of the two sets that were joined; becomes the new child set.
+        /// 两个已连接集合中较小的一个；将成为新的子集合。
         /// </summary>
         public readonly T SmallerSet;
 
         /// <summary>
-        ///
+        /// 构造函数，用于初始化已连接的集合参数。
         /// </summary>
-        /// <param name="largerSet">The larger of the two sets that were joined; becomes the new parent set.</param>
-        /// <param name="smallerSet">The smaller of the two sets that were joined; becomes the new child set.</param>
+        /// <param name="largerSet">两个已连接集合中较大的一个；将成为新的父集合。</param>
+        /// <param name="smallerSet">两个已连接集合中较小的一个；将成为新的子集合。</param>
         public JoinedEventArgs(T largerSet, T smallerSet)
         {
             LargerSet = largerSet;
@@ -63,13 +63,11 @@ namespace GoRogue
     }
 
     /// <summary>
-    /// Basic representation of a disjoint set data structure.
+    /// 不相交集合数据结构的基本表示。
     /// </summary>
     /// <remarks>
-    /// For reasons pertaining to optimization, this disjoint set implementation does not use
-    /// generics, and instead holds integer values, which will be exactly all integer values in range
-    /// [0, num_items_in_set - 1].  Thus, you will need to assign appropriate IDs to objects you intend
-    /// to add and map them appropriately.
+    /// 出于优化原因，此不相交集合的实现不使用泛型，而是持有整数值，这些整数值将恰好是范围
+    /// [0, num_items_in_set - 1] 内的所有整数值。因此，您需要为打算添加的对象分配适当的ID，并适当地映射它们。
     /// </remarks>
     [Serializable]
     [PublicAPI]
@@ -82,9 +80,9 @@ namespace GoRogue
         public event EventHandler<JoinedEventArgs>? SetsJoined;
 
         /// <summary>
-        /// Constructor. The disjoint set will contain all values in range [0, <paramref name="size" /> - 1].
+        /// 构造函数。不相交集合将包含范围 [0, <paramref name="size" /> - 1] 内的所有值。
         /// </summary>
-        /// <param name="size">(Max) size of the disjoint set.</param>
+        /// <param name="size">不相交集合的（最大）大小。</param>
         public DisjointSet(int size)
         {
             Count = size;
@@ -104,7 +102,7 @@ namespace GoRogue
         /// <inheritdoc />
         public int Find(int obj)
         {
-            // Find base parent, and path compress
+            // 查找基础父节点，并进行路径压缩
             if (obj != _parents[obj])
                 _parents[obj] = Find(_parents[obj]);
 
@@ -115,16 +113,16 @@ namespace GoRogue
         public bool InSameSet(int obj1, int obj2) => Find(obj1) == Find(obj2); // In same set; same parent
 
         /// <summary>
-        /// Returns a read-only representation of the disjoint set.
+        /// 返回不相交集合的只读表示。
         /// </summary>
-        /// <returns>A read-only representation of the disjoint set.</returns>
+        /// <returns>不相交集合的只读表示。</returns>
         public IReadOnlyDisjointSet AsReadOnly() => this;
 
         /// <summary>
-        /// Performs a union of the sets containing the objects specified by the two IDs. After this operation,
-        /// every element in the sets containing the two objects specified will be part of one larger set.
+        /// 对包含两个指定ID对象的集合执行并集操作。执行此操作后，
+        /// 包含这两个指定对象的集合中的每个元素都将成为一个更大集合的一部分。
         /// </summary>
-        /// <remarks>If the two elements are already in the same set, nothing is done.</remarks>
+        /// <remarks>如果这两个元素已经在同一个集合中，则不会执行任何操作。</remarks>
         /// <param name="obj1" />
         /// <param name="obj2" />
         public void MakeUnion(int obj1, int obj2)
@@ -132,9 +130,9 @@ namespace GoRogue
             var i = Find(obj1);
             var j = Find(obj2);
 
-            if (i == j) return; // Two elements are already in same set; same parent
+            if (i == j) return; // 两个元素已经在同一个集合中；具有相同的父节点
 
-            // Always append smaller set to larger set
+            // 总是将较小的集合附加到较大的集合上
             if (_sizes[i] <= _sizes[j])
             {
                 _parents[i] = j;
@@ -152,17 +150,16 @@ namespace GoRogue
         }
 
         /// <summary>
-        /// Returns a string representation of the DisjointSet, showing IDs of parents and all elements in
-        /// their set.
+        /// 返回 DisjointSet 的字符串表示形式，显示集合中父元素和所有元素的 ID。
         /// </summary>
-        /// <returns>A string representation of the DisjointSet.</returns>
+        /// <returns>DisjointSet 的字符串表示形式。</returns>
         public override string ToString() => ExtendToString(i => i.ToString());
 
         /// <summary>
-        /// Returns a string representation of the DisjointSet, showing parents and all elements in
-        /// their set.  The given function is used to produce the string for each element.
+        /// 返回 DisjointSet 的字符串表示形式，显示集合中的父元素和所有元素。
+        /// 给定的函数用于为每个元素生成字符串。
         /// </summary>
-        /// <returns>A string representation of the DisjointSet.</returns>
+        /// <returns>DisjointSet 的字符串表示形式。</returns>
         public string ExtendToString(Func<int, string> elementStringifier)
         {
             var values = new Dictionary<int, List<int>>();
@@ -173,10 +170,10 @@ namespace GoRogue
                 if (!values.ContainsKey(parentOf))
                     values[parentOf] = new List<int>
                     {
-                        parentOf // Parent is the first element in each child list
+                        parentOf // 父元素是每个子列表中的第一个元素
                     };
 
-                if (parentOf != i) // We already added the parent, so don't double add
+                if (parentOf != i) // 我们已经添加了父元素，所以不要重复添加
                     values[parentOf].Add(i);
             }
 
@@ -184,7 +181,7 @@ namespace GoRogue
                 pairSeparator: "\n", end: "");
         }
 
-        // Used to ensure ToString doesn't affect the performance of future operations
+        // 用于确保 ToString 方法不会影响后续操作的性能
         private int FindNoCompression(int obj)
         {
             while (_parents[obj] != obj)
@@ -195,15 +192,14 @@ namespace GoRogue
     }
 
     /// <summary>
-    /// An easier-to-use (but less efficient) variant of <see cref="DisjointSet"/>.  This version takes actual objects
-    /// of type T, and manages IDs for you automatically.
+    /// <see cref="DisjointSet"/>的一个更易使用（但效率较低）的变体。此版本接受类型为T的实际对象，
+    /// 并自动为您管理ID。
     /// </summary>
     /// <remarks>
-    /// This set structure is effectively exactly like <see cref="DisjointSet"/>, however it takes type T instead
-    /// of IDs.  For the sake of efficiency, it still requires the number of elements to be known when the set is
-    /// created.
+    /// 这个集合结构与<see cref="DisjointSet"/>实际上完全一样，但是它接受类型T而不是ID。
+    /// 为了效率起见，它仍然需要在创建集合时知道元素的数量。
     /// </remarks>
-    /// <typeparam name="T">Type of elements in the set.</typeparam>
+    /// <typeparam name="T">集合中元素的类型。</typeparam>
     [PublicAPI]
     public class DisjointSet<T> : IReadOnlyDisjointSet<T>
         where T : notnull
@@ -219,16 +215,14 @@ namespace GoRogue
         public int Count => _idSet.Count;
 
         /// <summary>
-        /// Creates a new disjoint set that is composed of the given items.  Each item will be its own
-        /// unique set.
+        /// 创建一个由给定项组成的新的不相交集合。每个项都将是其自己的唯一集合。
         /// </summary>
         /// <remarks>
-        /// The items will be mapped to IDs in the range [0, <paramref name="items" />.Length - 1]
-        /// via a Dictionary, where the keys are hashed using the comparer specified, or the default hash function
-        /// if no comparer is specified.
+        /// 这些项将通过字典映射到范围 [0, <paramref name="items" />.Length - 1] 内的ID，
+        /// 其中键使用指定的比较器进行哈希，或者如果没有指定比较器，则使用默认的哈希函数。
         /// </remarks>
-        /// <param name="items">Items to place in the disjoint set.</param>
-        /// <param name="comparer">Optional comparer to use when hashing items.</param>
+        /// <param name="items">要放置在不相交集合中的项。</param>
+        /// <param name="comparer">用于哈希项时可选的比较器。</param>
         public DisjointSet(IEnumerable<T> items, IEqualityComparer<T>? comparer = null)
         {
             _items = items.ToArray();
@@ -254,39 +248,39 @@ namespace GoRogue
             => _idSet.InSameSet(_indices[item1], _indices[item2]);
 
         /// <summary>
-        /// Returns a read-only representation of the disjoint set.
+        /// 返回不相交集合的只读表示。
         /// </summary>
-        /// <returns>A read-only representation of the disjoint set.</returns>
+        /// <returns>不相交集合的只读表示。</returns>
         public IReadOnlyDisjointSet<T> AsReadOnly() => this;
 
         /// <summary>
-        /// Performs a union of the sets containing the two objects specified. After this operation,
-        /// every element in the sets containing the two objects specified will be part of one larger set.
+        /// 对包含两个指定对象的集合执行并集操作。执行此操作后，
+        /// 包含这两个指定对象的集合中的每个元素都将成为一个更大集合的一部分。
         /// </summary>
-        /// <remarks>If the two elements are already in the same set, nothing is done.</remarks>
+        /// <remarks>如果这两个元素已经位于同一个集合中，则不会执行任何操作。</remarks>
         /// <param name="item1" />
         /// <param name="item2" />
         public void MakeUnion(T item1, T item2)
             => _idSet.MakeUnion(_indices[item1], _indices[item2]);
 
         /// <summary>
-        /// Returns a string representation of the DisjointSet, parents and all elements in
-        /// their set.  The element's default ToString method is used to produce the string.
+        /// 返回 DisjointSet、父节点以及它们集合中所有元素的字符串表示形式。
+        /// 使用元素的默认 ToString 方法来生成字符串。
         /// </summary>
-        /// <returns>A string representation of the DisjointSet.</returns>
+        /// <returns>DisjointSet 的字符串表示形式。</returns>
         public override string ToString()
             => _idSet.ExtendToString(i => _items[i].ToString() ?? "null");
 
         /// <summary>
-        /// Returns a string representation of the DisjointSet, showing parents and all elements in
-        /// their set.  The given function is used to produce the string for each element.
+        /// 返回不相交集合（DisjointSet）的字符串表示形式，展示父节点以及它们集合中的所有元素。
+        /// 使用给定的函数来为每个元素生成字符串。
         /// </summary>
-        /// <returns>A string representation of the DisjointSet.</returns>
+        /// <returns>不相交集合的字符串表示形式。</returns>
         public string ExtendToString(Func<T, string> elementStringifier)
             => _idSet.ExtendToString(i => elementStringifier(_items[i]));
 
         #region Event Synchronization
-        // When the internal event is fired, fire the public one by finding the objects corresponding to the IDs given.
+        // 当内部事件被触发时，通过找到与给定ID对应的对象来触发公共事件。
         private void IDSetOnSetsJoined(object? sender, JoinedEventArgs e)
             => SetsJoined?.Invoke(this, new JoinedEventArgs<T>(_items[e.LargerSetID], _items[e.SmallerSetID]));
         #endregion

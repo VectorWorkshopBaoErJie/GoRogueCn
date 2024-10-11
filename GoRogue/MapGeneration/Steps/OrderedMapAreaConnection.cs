@@ -11,67 +11,60 @@ using ShaiRandom.Generators;
 namespace GoRogue.MapGeneration.Steps
 {
     /// <summary>
-    /// Connects areas of the map by connecting each area specified to a random other area, or connecting the areas
-    /// in a specific order specified.
+    /// 通过将每个指定区域连接到另一个随机区域，或按照指定的特定顺序连接区域，来连接地图上的区域。
     /// </summary>
     [PublicAPI]
     public class OrderedMapAreaConnection : GenerationStep
     {
         /// <summary>
-        /// Optional tag that must be associated with the component used to store map areas connected by this algorithm.
+        /// 可选的标签，必须与此算法连接的地图区域所用的组件相关联。
         /// </summary>
         public readonly string? AreasComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component created/used to store the tunnels created by this connection
-        /// method.
+        /// 可选的标签，必须与创建/用于存储此连接方法所创建的隧道的组件相关联。
         /// </summary>
         public readonly string? TunnelsComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component used to set wall/floor status of tiles changed by this
-        /// algorithm.
+        /// 可选的标签，必须与此算法更改的瓦片的墙壁/地板状态设置所用的组件相关联。
         /// </summary>
         public readonly string? WallFloorComponentTag;
 
         /// <summary>
-        /// The area connection strategy to use. Not all methods function on maps with concave areas
-        /// -- see respective class documentation for details.
+        /// 要使用的区域连接策略。并非所有方法都适用于具有凹形区域的地图
+        /// ——有关详细信息，请参阅相应类的文档。
         /// </summary>
         public IConnectionPointSelector ConnectionPointSelector = new RandomConnectionPointSelector();
 
         /// <summary>
-        /// Whether or not to randomize the order of the areas before connecting them.  If false, the areas will
-        /// be connected to the next area in the list specified by <see cref="AreasComponentTag"/>.
+        /// 在连接区域之前是否随机化区域的顺序。如果为 false，则区域将
+        /// 连接到由<see cref="AreasComponentTag"/>指定的列表中的下一个区域。
         /// </summary>
         public bool RandomizeOrder;
 
         /// <summary>
-        /// The tunnel creation strategy to use. Defaults to <see cref="HorizontalVerticalTunnelCreator" /> using
-        /// <see cref="GlobalRandom.DefaultRNG"/>.
+        /// 要使用的隧道创建策略。默认为使用<see cref="GlobalRandom.DefaultRNG"/>的<see cref="HorizontalVerticalTunnelCreator"/>。
         /// </summary>
         public ITunnelCreator TunnelCreator = new HorizontalVerticalTunnelCreator();
 
         /// <summary>
-        /// RNG to use for randomization or room order (if randomization is enabled).
+        /// 用于随机化或房间顺序（如果启用了随机化）的RNG。
         /// </summary>
         public IEnhancedRandom RNG = GlobalRandom.DefaultRNG;
 
         /// <summary>
-        /// Creates a new ordered area connection step.
+        /// 创建一个新的有序区域连接步骤。
         /// </summary>
-        /// <param name="name">>The name of the generation step.  Defaults to <see cref="OrderedMapAreaConnection" />.</param>
+        /// <param name="name">生成步骤的名称。默认为<see cref="OrderedMapAreaConnection"/>。</param>
         /// <param name="wallFloorComponentTag">
-        /// Optional tag that must be associated with the map view component used to store/set
-        /// floor/wall status.  Defaults to "WallFloor".
+        /// 可选的标签，必须与用于存储/设置地板/墙壁状态的地图视图组件相关联。默认为"WallFloor"。
         /// </param>
         /// <param name="areasComponentTag">
-        /// Optional tag that must be associated with the component used to store map areas
-        /// connected by this algorithm.  Defaults to "Areas".
+        /// 可选的标签，必须与通过此算法连接的地图区域所用的组件相关联。默认为"Areas"。
         /// </param>
         /// <param name="tunnelsComponentTag">
-        /// Optional tag that must be associated with the component created/used to store the
-        /// tunnels created by this connection method.  Defaults to "Tunnels".
+        /// 可选的标签，必须与创建/用于存储通过此连接方法创建的隧道的组件相关联。默认为"Tunnels"。
         /// </param>
         public OrderedMapAreaConnection(string? name = null, string? wallFloorComponentTag = "WallFloor",
                                         string? areasComponentTag = "Areas", string? tunnelsComponentTag = "Tunnels")

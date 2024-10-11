@@ -8,14 +8,12 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.MapGeneration
 {
     /// <summary>
-    /// Class designed to calculate and produce a list of Areas representing each unique connected
-    /// area of the map.
+    /// 该类旨在计算和生成一个区域列表，代表地图上每个唯一相连的区域。
     /// </summary>
     /// <remarks>
-    /// The class takes in an <see cref="SadRogue.Primitives.GridViews.IGridView{T}" />, where a value of true for a given position indicates it
-    /// should be part of a map area, and false indicates it should not be part of any map area. In a
-    /// classic roguelike dungeon example, this might be a view of "walkability" where floors return a
-    /// value of true and walls return a value of false.
+    /// 该类接收一个 <see cref="SadRogue.Primitives.GridViews.IGridView{T}" />，其中给定位置的值为 true 表示它应该是地图区域的一部分，
+    /// 而 false 表示它不应该是任何地图区域的一部分。在一个经典的 Roguelike 地牢示例中，这可能是一个“可行走性”视图，
+    /// 其中地板返回 true 值，而墙壁返回 false 值。
     /// </remarks>
     [PublicAPI]
     public class MapAreaFinder
@@ -25,7 +23,7 @@ namespace GoRogue.MapGeneration
 
         private AdjacencyRule _adjacencyMethod;
         /// <summary>
-        /// The method used for determining connectivity of the grid.
+        /// 用于确定网格连接性的方法。
         /// </summary>
         public AdjacencyRule AdjacencyMethod
         {
@@ -38,26 +36,24 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Point hashing algorithm to use for the areas created.  If set to null, the default point hashing algorithm
-        /// will be used.
+        /// 用于所创建区域的点哈希算法。如果设置为null，将使用默认的点哈希算法。
         /// </summary>
         public IEqualityComparer<Point>? PointHasher;
 
         /// <summary>
-        /// Grid view indicating which cells should be considered part of a map area and which should not.
+        /// 网格视图，指示哪些单元格应被视为地图区域的一部分，哪些不应被视为地图区域的一部分。
         /// </summary>
         public IGridView<bool> AreasView;
 
         /// <summary>
-        /// Constructor.
+        /// 构造函数。
         /// </summary>
         /// <param name="areasView">
-        /// Grid view indicating which cells should be considered part of a map area and which should not.
+        /// 网格视图，指示哪些单元格应被视为地图区域的一部分，哪些不应被视为地图区域的一部分。
         /// </param>
-        /// <param name="adjacencyMethod">The method used for determining connectivity of the grid.</param>
+        /// <param name="adjacencyMethod">用于确定网格连接性的方法。</param>
         /// <param name="pointHasher">
-        /// Point hashing algorithm to use for the areas created.  If set to null the default point hashing algorithm
-        /// will be used.
+        /// 用于所创建区域的点哈希算法。如果设置为null，将使用默认的点哈希算法。
         /// </param>
         public MapAreaFinder(IGridView<bool> areasView, AdjacencyRule adjacencyMethod, IEqualityComparer<Point>? pointHasher = null)
         {
@@ -68,19 +64,17 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Convenience function that creates a MapAreaFinder and returns the result of that
-        /// instances <see cref="MapAreas" /> function. Intended to be used for cases in which the area finder
-        /// will never be re-used.
+        /// 便利函数，用于创建一个MapAreaFinder实例，并返回该实例的<see cref="MapAreas" />函数的结果。
+        /// 此函数适用于那些MapAreaFinder实例永远不会被重复使用的情况。
         /// </summary>
         /// <param name="map">
-        /// Grid view indicating which cells should be considered part of a map area and which should not.
+        /// 网格视图，指示哪些单元格应被视为地图区域的一部分，哪些不应被视为地图区域的一部分。
         /// </param>
-        /// <param name="adjacencyMethod">The method used for determining connectivity of the grid.</param>
+        /// <param name="adjacencyMethod">用于确定网格连接性的方法。</param>
         /// <param name="pointHasher">
-        /// Point hashing algorithm to use for the areas created.  If set to null the default point hashing algorithm
-        /// will be used.
+        /// 用于所创建区域的点哈希算法。如果设置为null，将使用默认的点哈希算法。
         /// </param>
-        /// <returns>An IEnumerable of each (unique) map area.</returns>
+        /// <returns>一个IEnumerable，包含每个（唯一的）地图区域。</returns>
         public static IEnumerable<Area> MapAreasFor(IGridView<bool> map, AdjacencyRule adjacencyMethod, IEqualityComparer<Point>? pointHasher = null)
         {
             var areaFinder = new MapAreaFinder(map, adjacencyMethod, pointHasher);
@@ -88,20 +82,18 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Convenience function that creates a MapAreaFinder and returns the result of that
-        /// instance's <see cref="FillFrom(Point, bool)" /> function. Intended to be used for cases
-        /// in which the area finder will never be re-used.
+        /// 便利函数，用于创建一个MapAreaFinder实例，并返回该实例的<see cref="FillFrom(Point, bool)" />函数的结果。
+        /// 此函数适用于MapAreaFinder实例永远不会被重复使用的情况。
         /// </summary>
         /// <param name="map">
-        /// Grid view indicating which cells should be considered part of a map area and which should not.
+        /// 网格视图，指示哪些单元格应被视为地图区域的一部分，哪些不应被视为地图区域的一部分。
         /// </param>
-        /// <param name="adjacencyMethod">The method used for determining connectivity of the grid.</param>
-        /// <param name="position">The position to start from.</param>
+        /// <param name="adjacencyMethod">用于确定网格连接性的方法。</param>
+        /// <param name="position">开始填充的起始位置。</param>
         /// <param name="pointHasher">
-        /// Point hashing algorithm to use for the areas created.  If set to null the default point hashing algorithm
-        /// will be used.
+        /// 用于所创建区域的点哈希算法。如果设置为null，将使用默认的点哈希算法。
         /// </param>
-        /// <returns>An IEnumerable of each (unique) map area.</returns>
+        /// <returns>一个IEnumerable，包含每个（唯一的）地图区域。</returns>
         public static Area? FillFrom(IGridView<bool> map, AdjacencyRule adjacencyMethod, Point position,
                                      IEqualityComparer<Point>? pointHasher = null)
         {
@@ -110,13 +102,12 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Calculates the list of map areas, returning each unique map area.
+        /// 计算地图区域列表，返回每个唯一的地图区域。
         /// </summary>
         /// <param name="clearVisited">
-        /// Whether or not to reset all cells to unvisited before finding areas.  Visited positions cannot be included
-        /// in any of the resulting areas.
+        /// 在查找区域之前，是否将所有单元格重置为未访问状态。已访问的位置不能包含在任何结果区域中。
         /// </param>
-        /// <returns>An IEnumerable of each (unique) map area.</returns>
+        /// <returns>一个IEnumerable，包含每个（唯一的）地图区域。</returns>
         public IEnumerable<Area> MapAreas(bool clearVisited = true)
         {
             CheckAndResetVisited(clearVisited);
@@ -133,16 +124,14 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Calculates and returns an area representing every point connected to the start point given.
+        /// 计算并返回一个区域，该区域代表与给定起始点相连的所有点。
         /// </summary>
-        /// <param name="position">Position to start from.</param>
+        /// <param name="position">起始位置。</param>
         /// <param name="clearVisited">
-        /// Whether or not to reset all cells to unvisited before finding areas.  Visited positions cannot be included
-        /// in the resulting area.
+        /// 在查找区域之前，是否将所有单元格重置为未访问状态。已访问的位置不能包含在结果区域中。
         /// </param>
         /// <returns>
-        /// An area representing every point connected to the start point given, or null if there is no
-        /// valid area starting from that point.
+        /// 一个区域，代表与给定起始点相连的所有点；如果从该点出发没有有效区域，则返回null。
         /// </returns>
         public Area? FillFrom(Point position, bool clearVisited = true)
         {
@@ -155,8 +144,7 @@ namespace GoRogue.MapGeneration
         }
 
         /// <summary>
-        /// Resets all positions to "unvisited".  Called automatically if area-finding algorithms have the reset flag
-        /// set to true.
+        /// 将所有位置重置为“未访问”。如果区域查找算法将重置标志设置为true，则会自动调用此方法。
         /// </summary>
         public void ResetVisitedPositions()
         {
@@ -177,6 +165,17 @@ namespace GoRogue.MapGeneration
                     "Fill algorithm not set to clear visited, but the map view size has changed since it was allocated.", nameof(canClearVisited));
         }
 
+        /// <summary>
+        /// 访问指定的位置，并返回一个表示所有连接点的区域。
+        /// </summary>
+        /// <param name="position">访问的起始位置。</param>
+        /// <returns>表示与起始位置相连的所有点的区域。</returns>
+        /// <remarks>
+        /// 此函数使用基于栈的方法执行连接点的深度优先搜索（DFS）。
+        /// 它假定_visited数组已初始化且不为null，这是由调用此方法的公共函数所确保的。
+        /// 如果点相邻（基于_adjacentDirs）且在AreasView的范围内，则认为它们是连接的。
+        /// 已访问的点和不属于任何mapArea的点将被跳过。
+        /// </remarks>
         private Area Visit(Point position)
         {
             // NOTE: This function can safely assume that _visited is NOT null, as this is enforced

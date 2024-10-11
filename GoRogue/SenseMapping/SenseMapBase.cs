@@ -9,36 +9,34 @@ using SadRogue.Primitives.GridViews;
 namespace GoRogue.SenseMapping
 {
     /// <summary>
-    /// A structure containing a grid view and a custom resize function to use in order to resize that grid view to a new size.
+    /// 一个包含网格视图和自定义调整大小函数的结构，用于将该网格视图调整为新的大小。
     /// </summary>
     /// <remarks>
-    /// <see cref="Resizer"/> takes in the new width/height required and the old grid view; and must return a new grid view of the appropriate
-    /// size.  It can return a new object or an existing one; the result in either case will be assigned to the result view of the sense map
-    /// when the resize takes place.  The resize function must also ensure that, when the new grid view is returned, it must have all values
-    /// set to 0.0.  This allows a clear operation to be avoided if underlying data structures were re-allocated and thus cells are implicitly
-    /// cleared.
+    /// <see cref="Resizer"/> 接收所需的新宽度/高度和旧的网格视图，并必须返回适当大小的新网格视图。
+    /// 它可以返回一个新对象或一个现有对象；在任何情况下，结果都将在调整大小时分配给感知图的结果视图。
+    /// 调整大小函数还必须确保，当返回新的网格视图时，必须将所有值设置为 0.0。
+    /// 如果底层数据结构被重新分配，从而单元格被隐式清除，这可以避免执行清除操作。
     ///
-    /// This structure also provides a <see cref="ArrayViewResizer"/>, which is an efficient resizer to use if the <see cref="ResultView"/> is an
-    /// ArrayView.
+    /// 该结构还提供了一个 <see cref="ArrayViewResizer"/>，如果 <see cref="ResultView"/> 是 ArrayView，它是一个高效的调整器。
     /// </remarks>
     [PublicAPI]
     public readonly struct CustomResultViewWithResize
     {
         /// <summary>
-        /// The initial result view to use.
+        /// 要使用的初始结果视图。
         /// </summary>
         public readonly ISettableGridView<double> ResultView;
 
         /// <summary>
-        /// The resizer function to use.  See the <see cref="CustomResultViewWithResize"/> class description for constraints on this function.
+        /// 要使用的调整器函数。有关此函数的约束，请参阅 <see cref="CustomResultViewWithResize"/> 类描述。
         /// </summary>
         public readonly Func<int, int, ISettableGridView<double>, ISettableGridView<double>> Resizer;
 
         /// <summary>
-        /// Constructor.
+        /// 构造函数。
         /// </summary>
-        /// <param name="resultView">Result view to initially use.</param>
-        /// <param name="resizer">Resizer function which must clear, resize, and return the result view.</param>
+        /// <param name="resultView">最初要使用的结果视图。</param>
+        /// <param name="resizer">必须清除、调整大小并返回结果视图的调整器函数。</param>
         public CustomResultViewWithResize(ISettableGridView<double> resultView,
             Func<int, int, ISettableGridView<double>, ISettableGridView<double>> resizer)
         {
@@ -47,18 +45,17 @@ namespace GoRogue.SenseMapping
         }
 
         /// <summary>
-        /// An array resize function appropriate for use as a <see cref="CustomResultViewWithResize.Resizer"/> when the grid view
-        /// being used is an ArrayView.
+        /// 当使用的网格视图是ArrayView时，适合用作<see cref="CustomResultViewWithResize.Resizer"/>的数组调整大小函数。
         /// </summary>
-        /// <param name="width"/>
-        /// <param name="height"/>
-        /// <param name="currentView"/>
-        /// <returns>An array view re-allocated/cleared as appropriate.</returns>
+        /// <param name="width">宽度</param>
+        /// <param name="height">高度</param>
+        /// <param name="currentView">当前视图</param>
+        /// <returns>根据需要重新分配/清除的数组视图。</returns>
         public static ISettableGridView<double> ArrayViewResizer(int width, int height, ISettableGridView<double> currentView)
         {
             var current = (ArrayView<double>)currentView;
 
-            // No need to resize the entire thing; just steal the internal array and clear it to avoid re-allocation
+            // 无需调整整个结构的大小；只需获取内部数组并清空，以避免重新分配内存
             if (width * height == current.Count)
             {
                 var newView = new ArrayView<double>(current, width);
@@ -71,38 +68,36 @@ namespace GoRogue.SenseMapping
     }
 
     /// <summary>
-    /// Base class that is convenient for creating custom implementations of the <see cref="ISenseMap"/> interface.
+    /// 便于创建<see cref="ISenseMap"/>接口自定义实现的基类。
     /// </summary>
     /// <remarks>
-    /// This class implements much of the boilerplate code required to implement <see cref="ISenseMap"/> properly, making
-    /// sure that the implementer has to implement only the minimal subset of functions and properties.
+    /// 此类实现了正确实现<see cref="ISenseMap"/>所需的大部分样板代码，确保实现者只需实现功能和属性的最小子集。
     ///
-    /// An implementer should implement <see cref="OnCalculate"/> to perform the spread calculation for all sense sources
-    /// and aggregate it into <see cref="ResultView"/>.  Notably, the implementer SHOULD NOT call <see cref="Reset"/> nor perform
-    /// any equivalent functionality, and SHOULD NOT fire the <see cref="Recalculated"/> or <see cref="SenseMapReset"/> events.
-    /// All of this is taken care of the the <see cref="Calculate"/> function, which calls OnCalculate.
+    /// 实现者应实现<see cref="OnCalculate"/>来执行所有感知源的传播计算，并将其聚合到<see cref="ResultView"/>中。
+    /// 值得注意的是，实现者不应调用<see cref="Reset"/>，也不应执行任何等效的功能，并且不应触发<see cref="Recalculated"/>
+    /// 或<see cref="SenseMapReset"/>事件。所有这些都由调用OnCalculate的<see cref="Calculate"/>函数处理。
     ///
-    /// Implementers may specify a custom grid view to use a a result, and must also supply a resizing function in the constructor.
-    /// This allows the sense map to resize the result view if the transparency view changes sizes.  Typically, an array view along with
-    /// a <see cref="CustomResultViewWithResize.ArrayViewResizer"/> as the resizer is sufficient.
+    /// 实现者可以指定一个自定义网格视图作为结果使用，并且必须在构造函数中提供一个调整大小的函数。
+    /// 这允许感知地图在透明度视图更改大小时调整结果视图的大小。通常，数组视图以及作为调整器的
+    /// <see cref="CustomResultViewWithResize.ArrayViewResizer"/>就足够了。
     ///
-    /// Finally, the implementer must implement the <see cref="CurrentSenseMap"/>, <see cref="NewlyInSenseMap"/>, and <see cref="NewlyOutOfSenseMap"/>
-    /// enumerables.  This allows the implementer to control the method of tracking it.
+    /// 最后，实现者必须实现<see cref="CurrentSenseMap"/>、<see cref="NewlyInSenseMap"/>和<see cref="NewlyOutOfSenseMap"/>
+    /// 可枚举项。这允许实现者控制其跟踪方法。
     /// </remarks>
     [PublicAPI]
     public abstract class SenseMapBase : ISenseMap
     {
         /// <summary>
-        /// The actual grid view which is used to record results.  Exposed publicly in a read-only fashion via
-        /// <see cref="ResultView"/>.
+        /// 用于记录结果的实际网格视图。通过<see cref="ResultView"/>以只读方式公开。
+        /// </summary>
         /// </summary>
         protected ISettableGridView<double> ResultViewBacking;
 
         /// <summary>
-        /// The function to use to resize the ResultView if the resistance view changes sizes between calculate calls.
-        /// The function should perform any necessary operations and return a grid view which is of the appropriate size.
+        /// 如果在计算调用之间阻力视图的大小发生变化，则使用此函数来调整ResultView的大小。
+        /// 该函数应执行任何必要的操作，并返回一个适当大小的网格视图。
         ///
-        /// The function must return a view with all values set to 0.0, which has the width and height given.
+        /// 该函数必须返回一个所有值都设置为0.0的视图，该视图具有给定的宽度和高度。
         /// </summary>
         protected Func<int, int, ISettableGridView<double>, ISettableGridView<double>> ResultViewResizer;
 
@@ -132,16 +127,15 @@ namespace GoRogue.SenseMapping
         public abstract IEnumerable<Point> NewlyOutOfSenseMap { get; }
 
         /// <summary>
-        /// Constructor.
+        /// 构造函数。
         /// </summary>
-        /// <param name="resistanceView">The resistance map to use for calculations.</param>
+        /// <param name="resistanceView">用于计算的阻力图。</param>
         /// <param name="resultViewAndResizer">
-        /// The view in which SenseMap calculation results are stored, along with a method to use to resize it as needed.
+        /// SenseMap计算结果存储的视图，以及一个根据需要调整其大小的方法。
         ///
-        /// If unspecified, an ArrayView will be used for the result view, and the resize function will allocate a new
-        /// ArrayView of the appropriate size as needed.  This should be sufficient for most use cases.
+        /// 如果未指定，将使用ArrayView作为结果视图，并且调整大小函数将根据需要分配一个新的适当大小的ArrayView。这应该足以满足大多数用例。
         ///
-        /// This function must return a view with all of its values set to 0.0, which has the given width and height.
+        /// 此函数必须返回一个所有值都设置为0.0的视图，该视图具有给定的宽度和高度。
         /// </param>
         protected SenseMapBase(IGridView<double> resistanceView, CustomResultViewWithResize? resultViewAndResizer = null)
         {
@@ -193,26 +187,25 @@ namespace GoRogue.SenseMapping
         }
 
         /// <summary>
-        /// Performs <see cref="ISenseSource.CalculateLight"/> on all sources, and aggregates their results into <see cref="ResultViewBacking"/>.
+        /// 对所有源执行<see cref="ISenseSource.CalculateLight"/>，并将它们的结果聚合到<see cref="ResultViewBacking"/>中。
         /// </summary>
         /// <remarks>
-        /// Custom implementations should implement this function to perform their calculation; the Calculate function
-        /// calls reset first, then calls this, automatically firing relevant events.
+        /// 自定义实现应该实现此函数以执行其计算；Calculate函数首先调用reset，然后调用此函数，自动触发相关事件。
         /// </remarks>
         protected abstract void OnCalculate();
 
         // ReSharper disable once MethodOverloadWithOptionalParameter
         /// <summary>
-        /// ToString that customizes the characters used to represent the map.
+        /// 自定义用于表示地图的字符的ToString方法。
         /// </summary>
-        /// <param name="normal">The character used for any location not in the SenseMap.</param>
+        /// <param name="normal">用于SenseMap中不存在的任何位置的字符。</param>
         /// <param name="center">
-        /// The character used for any location that is the center-point of a source.
+        /// 用于任何作为源中心点的位置的字符。
         /// </param>
         /// <param name="sourceValue">
-        /// The character used for any location that is in range of a source, but not a center point.
+        /// 用于任何在源范围内但非中心点的位置的字符。
         /// </param>
-        /// <returns>The string representation of the SenseMap, using the specified characters.</returns>
+        /// <returns>使用指定字符的SenseMap的字符串表示形式。</returns>
         public string ToString(char normal = '-', char center = 'C', char sourceValue = 'S')
         {
             var result = new StringBuilder();
@@ -236,21 +229,18 @@ namespace GoRogue.SenseMapping
         }
 
         /// <summary>
-        /// Returns a string representation of the map, where any location not in the SenseMap is
-        /// represented by a '-' character, any position that is the center of some source is
-        /// represented by a 'C' character, and any position that has a non-zero value but is not a
-        /// center is represented by an 'S'.
+        /// 返回一个字符串表示形式的地图，其中SenseMap中不存在的任何位置都由'-'字符表示，
+        /// 任何作为某些源中心的位置都由'C'字符表示，任何具有非零值但不是中心的位置都由'S'表示。
         /// </summary>
-        /// <returns>A (multi-line) string representation of the SenseMap.</returns>
+        /// <returns>SenseMap的多行字符串表示形式。</returns>
         public override string ToString() => ToString();
 
         /// <summary>
-        /// Returns a string representation of the map, with the actual values in the SenseMap,
-        /// rounded to the given number of decimal places.
+        /// 返回一个字符串表示形式的地图，其中包含SenseMap中的实际值，这些值四舍五入到给定的小数位数。
         /// </summary>
-        /// <param name="decimalPlaces">The number of decimal places to round to.</param>
+        /// <param name="decimalPlaces">要四舍五入到的小数位数。</param>
         /// <returns>
-        /// A string representation of the map, rounded to the given number of decimal places.
+        /// 地图的字符串表示形式，四舍五入到给定的小数位数。
         /// </returns>
         public string ToString(int decimalPlaces)
             => ResultView.ExtendToString(elementStringifier: obj
