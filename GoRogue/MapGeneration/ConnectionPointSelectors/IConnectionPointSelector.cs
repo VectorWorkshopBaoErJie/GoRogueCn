@@ -4,20 +4,18 @@ using SadRogue.Primitives;
 namespace GoRogue.MapGeneration.ConnectionPointSelectors
 {
     /// <summary>
-    /// Interface for implementing an algorithm for selecting the positions to connect in order to
-    /// connect two given areas.
+    /// 用于实现选择连接位置的算法，以便连接两个给定的区域。
     /// </summary>
     [PublicAPI]
     public interface IConnectionPointSelector
     {
         /// <summary>
-        /// Implements the algorithm. Returns pair of positions -- one position in <paramref name="area1" />
-        /// to use, and on position in <paramref name="area2" /> to use.
+        /// 实现算法。返回一对位置——一个在<paramref name="area1"/>中使用，另一个在<paramref name="area2"/>中使用。
         /// </summary>
-        /// <param name="area1">First <see cref="SadRogue.Primitives.Area" /> to connect.</param>
-        /// <param name="area2">Second <see cref="SadRogue.Primitives.Area" /> to connect.</param>
+        /// <param name="area1">第一个要连接的<see cref="SadRogue.Primitives.Area"/>。</param>
+        /// <param name="area2">第二个要连接的<see cref="SadRogue.Primitives.Area"/>。</param>
         /// <returns>
-        /// A pair of positions (one from each <see cref="SadRogue.Primitives.Area" />) to connect.
+        /// 一对用于连接的位置（每个<see cref="SadRogue.Primitives.Area"/>中一个）。
         /// </returns>
         AreaConnectionPointPair SelectConnectionPoints(IReadOnlyArea area1, IReadOnlyArea area2);
     }

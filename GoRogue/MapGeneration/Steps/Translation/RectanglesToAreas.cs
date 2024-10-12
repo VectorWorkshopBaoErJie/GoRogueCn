@@ -6,40 +6,37 @@ using SadRogue.Primitives;
 namespace GoRogue.MapGeneration.Steps.Translation
 {
     /// <summary>
-    /// "Translation" step that takes as input an <see cref="ItemList{TItem}" />, and transforms it into an
-    /// <see cref="ItemList{Area}" />.
-    /// Can optionally remove the <see cref="ItemList{Rectangle}" /> from the context.
-    /// Context Components Required:
-    /// - <see cref="ItemList{Rectangle}" /> (tag <see cref="RectanglesComponentTag" />): The list of rectangles to translate
-    /// to areas
-    /// Context Components Added/Used
-    /// - <see cref="ItemList{Area}" /> (tag <see cref="AreasComponentTag" />): The list of areas to add the areas representing
-    /// the rectangles to.  If it does not exist, it will be created.
+    /// “转换”步骤，该步骤接收一个 <see cref="ItemList{TItem}" /> 作为输入，并将其转换为 <see cref="ItemList{Area}" />。
+    /// 可以选择从上下文中移除 <see cref="ItemList{Rectangle}" />。
+    /// 所需的上下文组件：
+    /// - <see cref="ItemList{Rectangle}" />（标签 <see cref="RectanglesComponentTag" />）：要转换为区域的矩形列表
+    /// 添加/使用的上下文组件：
+    /// - <see cref="ItemList{Area}" />（标签 <see cref="AreasComponentTag" />）：要添加表示矩形的区域的区域列表。如果不存在，将会创建。
     /// </summary>
     [PublicAPI]
     public class RectanglesToAreas : GenerationStep
     {
         /// <summary>
-        /// Tag that must be associated with the component used to store the resulting areas.
+        /// 必须与用于存储结果区域的组件相关联的标签。
         /// </summary>
         public readonly string AreasComponentTag;
 
         /// <summary>
-        /// Tag that must be associated with the component used as input rectangles.
+        /// 必须与用作输入矩形的组件相关联的标签。
         /// </summary>
         public readonly string RectanglesComponentTag;
 
         /// <summary>
-        /// Whether or not to remove the input list of rectangles from the context.  Defaults to false.
+        /// 是否从上下文中移除输入的矩形列表。默认为false。
         /// </summary>
         public bool RemoveSourceComponent;
 
         /// <summary>
-        /// Creates a new step for translation of <see cref="SadRogue.Primitives.Rectangle" /> lists to <see cref="SadRogue.Primitives.Area" /> lists.
+        /// 创建一个新的步骤，用于将 <see cref="SadRogue.Primitives.Rectangle" /> 列表转换为 <see cref="SadRogue.Primitives.Area" /> 列表。
         /// </summary>
-        /// <param name="name">The name of the generation step.  Defaults to <see cref="RectanglesToAreas" />.</param>
-        /// <param name="rectanglesComponentTag">Tag that must be associated with the component used as input rectangles.</param>
-        /// <param name="areasComponentTag">Tag that must be associated with the component used to store the resulting areas.</param>
+        /// <param name="name">生成步骤的名称。默认为 <see cref="RectanglesToAreas" />。</param>
+        /// <param name="rectanglesComponentTag">必须与用作输入矩形的组件相关联的标签。</param>
+        /// <param name="areasComponentTag">必须与用于存储结果区域的组件相关联的标签。</param>
         public RectanglesToAreas(string? name, string rectanglesComponentTag, string areasComponentTag)
             : base(name, (typeof(ItemList<Rectangle>), rectanglesComponentTag))
         {
@@ -48,11 +45,10 @@ namespace GoRogue.MapGeneration.Steps.Translation
         }
 
         /// <summary>
-        /// Creates a new step for translation of <see cref="SadRogue.Primitives.Rectangle" /> lists to <see cref="SadRogue.Primitives.Area" /> lists, with the name
-        /// <see cref="RectanglesToAreas" />.
+        /// 创建一个名为 <see cref="RectanglesToAreas" /> 的新步骤，用于将 <see cref="SadRogue.Primitives.Rectangle" /> 列表转换为 <see cref="SadRogue.Primitives.Area" /> 列表。
         /// </summary>
-        /// <param name="rectanglesComponentTag">Tag that must be associated with the component used as input rectangles.</param>
-        /// <param name="areasComponentTag">Tag that must be associated with the component used to store the resulting areas.</param>
+        /// <param name="rectanglesComponentTag">必须与用作输入矩形的组件相关联的标签。</param>
+        /// <param name="areasComponentTag">必须与用于存储结果区域的组件相关联的标签。</param>
         public RectanglesToAreas(string rectanglesComponentTag, string areasComponentTag)
             : this(null, rectanglesComponentTag, areasComponentTag)
         { }

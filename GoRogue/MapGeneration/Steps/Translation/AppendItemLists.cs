@@ -5,44 +5,41 @@ using JetBrains.Annotations;
 namespace GoRogue.MapGeneration.Steps.Translation
 {
     /// <summary>
-    /// Appends an item list onto another one, optionally removing the one that was appended from the context.
-    /// Context Components Required:
-    /// - <see cref="ItemList{TItem}" /> (tag <see cref="BaseListTag" />): The base list onto which the other list is appended
-    /// - <see cref="ItemList{TItem}" /> (tag <see cref="ListToAppendTag" />: The list whose items are appended onto the base
-    /// list.  This component will be removed from the context if <see cref="RemoveAppendedComponent" /> is true.
+    /// 将一个项目列表追加到另一个项目列表上，并可选择从上下文中移除被追加的那个列表。
+    /// 所需的上下文组件：
+    /// - <see cref="ItemList{TItem}" />（标签 <see cref="BaseListTag" />）：作为基础的列表，其他列表将被追加到这个列表上
+    /// - <see cref="ItemList{TItem}" />（标签 <see cref="ListToAppendTag" />）：其项目将被追加到基础列表上的列表。
+    ///   如果 <see cref="RemoveAppendedComponent" /> 为真，此组件将从上下文中移除。
     /// </summary>
-    /// <typeparam name="TItem">Type of item in the lists being appended.</typeparam>
+    /// <typeparam name="TItem">被追加的列表中的项目类型。</typeparam>
     [PublicAPI]
     public class AppendItemLists<TItem> : GenerationStep
         where TItem : notnull
     {
         /// <summary>
-        /// A tag that must be attached to the component that will have items from the other list appended onto it.
+        /// 必须附加到将有其他列表的项目追加到其上的组件的标签。
         /// </summary>
         public readonly string BaseListTag;
 
         /// <summary>
-        /// A tag that must be attached to the component that will have its items appended onto the base list.
+        /// 必须附加到将其项目追加到基础列表的组件上的标签。
         /// </summary>
         public readonly string ListToAppendTag;
 
         /// <summary>
-        /// Whether or not to remove the component with the tag <see cref="ListToAppendTag" /> after its items have been added to
-        /// the base list.  Defaults to false.
+        /// 在将带有 <see cref="ListToAppendTag" /> 标签的组件的项目添加到基础列表后，是否移除该组件。默认为 false。
         /// </summary>
         public bool RemoveAppendedComponent;
 
         /// <summary>
-        /// Creates a new generation component that appends lists.
+        /// 创建一个新的追加列表的生成组件。
         /// </summary>
-        /// <param name="name">Name of this component.</param>
+        /// <param name="name">此组件的名称。</param>
         /// <param name="baseListTag">
-        /// A tag that must be attached to the component that will have items from the other list
-        /// appended onto it.
+        /// 必须附加到将有其他列表的项目追加到其上的组件的标签。
         /// </param>
         /// <param name="listToAppendTag">
-        /// A tag that must be attached to the component that will have its items appended onto the
-        /// base list.
+        /// 必须附加到将其项目追加到基础列表的组件上的标签。
         /// </param>
         public AppendItemLists(string? name, string baseListTag, string listToAppendTag)
             : base(name, (typeof(ItemList<TItem>), baseListTag), (typeof(ItemList<TItem>), listToAppendTag))
@@ -57,15 +54,13 @@ namespace GoRogue.MapGeneration.Steps.Translation
         }
 
         /// <summary>
-        /// Creates a new generation component that appends lists.
+        /// 创建一个新的用于追加列表的生成组件。
         /// </summary>
         /// <param name="baseListTag">
-        /// A tag that must be attached to the component that will have items from the other list
-        /// appended onto it.
+        /// 必须附加到将接收其他列表项目的组件上的标签。
         /// </param>
         /// <param name="listToAppendTag">
-        /// A tag that must be attached to the component that will have its items appended onto the
-        /// base list.
+        /// 必须附加到将其项目追加到基础列表的组件上的标签。
         /// </param>
         public AppendItemLists(string baseListTag, string listToAppendTag)
             : this(null, baseListTag, listToAppendTag)

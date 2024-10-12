@@ -6,8 +6,8 @@ using SadRogue.Primitives;
 namespace GoRogue.MapGeneration.ContextComponents
 {
     /// <summary>
-    /// A list of openings in room walls, categorized by side they're on.  Typically created via a
-    /// <see cref="DoorList" />.
+    /// 房间墙壁上的开口列表，按它们所在的侧面进行分类。通常通过
+    /// <see cref="DoorList" /> 创建。
     /// </summary>
     [PublicAPI]
     public class RoomDoors : IEnumerable<ItemStepPair<Point>>
@@ -17,9 +17,9 @@ namespace GoRogue.MapGeneration.ContextComponents
 
 
         /// <summary>
-        /// Creates a new list of doors for a given room.
+        /// 为给定的房间创建一个新的门列表。
         /// </summary>
-        /// <param name="room">The room having its doors tracked.</param>
+        /// <param name="room">要追踪其门的房间。</param>
         public RoomDoors(Rectangle room)
         {
             _positionsList = new RectangleEdgePositionsList(room.Expand(1, 1));
@@ -27,57 +27,57 @@ namespace GoRogue.MapGeneration.ContextComponents
         }
 
         /// <summary>
-        /// Positions of doors on the top wall of the room.
+        /// 房间顶部墙壁上的门的位置。
         /// </summary>
         public IReadOnlyList<Point> TopDoors => _positionsList.TopPositions;
 
         /// <summary>
-        /// Positions of doors on the right wall of the room.
+        /// 房间右侧墙壁上的门的位置。
         /// </summary>
         public IReadOnlyList<Point> RightDoors => _positionsList.RightPositions;
 
         /// <summary>
-        /// Positions of doors on the bottom wall of the room.
+        /// 房间底部墙壁上的门的位置。
         /// </summary>
         public IReadOnlyList<Point> BottomDoors => _positionsList.BottomPositions;
 
         /// <summary>
-        /// Positions of doors on the bottom wall of the room.
+        /// 房间左侧墙壁上的门的位置。
         /// </summary>
         public IReadOnlyList<Point> LeftDoors => _positionsList.LeftPositions;
 
         /// <summary>
-        /// The room that is having its doors tracked.
+        /// 正在追踪其门的房间。
         /// </summary>
         public Rectangle Room => _positionsList.Rectangle.Expand(-1, -1);
 
         /// <summary>
-        /// A rectangle including the outer walls of the room having its doors tracked.
+        /// 包含正在追踪其门的房间的外墙的矩形。
         /// </summary>
         public Rectangle RoomWithOuterWalls => _positionsList.Rectangle;
 
         /// <summary>
-        /// Positions all doors in all walls of the room, with no duplicate locations.
+        /// 房间所有墙壁上的所有门的位置，没有重复的位置。
         /// </summary>
         public IEnumerable<Point> Doors => _positionsList.Positions;
 
         /// <summary>
-        /// A dictionary associating doors with the generation step that recorded/created them.
+        /// 一个将门与记录/创建它们的生成步骤相关联的字典。
         /// </summary>
         public IReadOnlyDictionary<Point, string> DoorToStepMapping => _doorToStepMapping.AsReadOnly();
 
         /// <summary>
-        /// Retrieves a read-only list of doors on the given side.  Direction specified must be a cardinal.
+        /// 检索给定侧面的只读门列表。指定的方向必须是基本方位（东、南、西、北）。
         /// </summary>
-        /// <param name="side">Side to get doors for.</param>
-        /// <returns>A read-only list of doors on the given side.</returns>
+        /// <param name="side">要获取门的侧面。</param>
+        /// <returns>给定侧面的只读门列表。</returns>
         public IReadOnlyList<Point> this[Direction side] => _positionsList[side];
 
         /// <summary>
-        /// Adds the given position to the appropriate lists of doors.
+        /// 将给定的位置添加到适当的门列表中。
         /// </summary>
-        /// <param name="generationStepName">The name of the generation step that is adding the door.</param>
-        /// <param name="doorPosition">Position to add.</param>
+        /// <param name="generationStepName">正在添加门的生成步骤的名称。</param>
+        /// <param name="doorPosition">要添加的位置。</param>
         public void AddDoor(string generationStepName, Point doorPosition)
         {
             _positionsList.Add(doorPosition);
@@ -85,18 +85,18 @@ namespace GoRogue.MapGeneration.ContextComponents
         }
 
         /// <summary>
-        /// Adds the given positions to the appropriate lists of doors.
+        /// 将给定的位置添加到适当的门列表中。
         /// </summary>
-        /// <param name="generationStepName">The name of the generation step that is adding the doors.</param>
-        /// <param name="doorPositions">Positions to add.</param>
+        /// <param name="generationStepName">正在添加门的生成步骤的名称。</param>
+        /// <param name="doorPositions">要添加的位置。</param>
         public void AddDoors(string generationStepName, params Point[] doorPositions)
             => AddDoors(generationStepName, (IEnumerable<Point>)doorPositions);
 
         /// <summary>
-        /// Adds the given positions to the appropriate lists of doors.
+        /// 将给定的位置集合添加到适当的门列表中。
         /// </summary>
-        /// <param name="generationStepName">The name of the generation step that is adding the doors.</param>
-        /// <param name="doorPositions">Positions to add.</param>
+        /// <param name="generationStepName">正在添加门的生成步骤的名称。</param>
+        /// <param name="doorPositions">要添加的位置集合。</param>
         public void AddDoors(string generationStepName, IEnumerable<Point> doorPositions)
         {
             foreach (var pos in doorPositions)
@@ -107,7 +107,7 @@ namespace GoRogue.MapGeneration.ContextComponents
         }
 
         /// <summary>
-        /// Gets an enumerator for all doors recorded and the step that added them.
+        /// 获取所有记录的门以及添加它们的步骤的枚举器。
         /// </summary>
         /// <returns/>
         public IEnumerator<ItemStepPair<Point>> GetEnumerator()
@@ -117,7 +117,7 @@ namespace GoRogue.MapGeneration.ContextComponents
         }
 
         /// <summary>
-        /// Gets an enumerator for all doors recorded and the step that added them.
+        /// 获取所有记录的门以及添加它们的步骤的非泛型枚举器。
         /// </summary>
         /// <returns/>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

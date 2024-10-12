@@ -4,21 +4,20 @@ using SadRogue.Primitives;
 namespace GoRogue.MapGeneration.ConnectionPointSelectors
 {
     /// <summary>
-    /// Implements a the selection algorithm that selects the two points closest to each other in the given <see cref="SadRogue.Primitives.Area" />
-    /// instances.
+    /// 实现了一种选择算法，该算法在给定的<see cref="SadRogue.Primitives.Area" />实例中选择彼此最接近的两个点。
     /// </summary>
     [PublicAPI]
     public class ClosestConnectionPointSelector : IConnectionPointSelector
     {
         /// <summary>
-        /// Distance calculation to use to determine closeness.
+        /// 用于确定接近度的距离计算方式。
         /// </summary>
         public readonly Distance DistanceCalculation;
 
         /// <summary>
-        /// Creates a new point selector.
+        /// 创建一个新的点选择器。
         /// </summary>
-        /// <param name="distanceCalculation">Distance calculation to use to determine closeness.</param>
+        /// <param name="distanceCalculation">用于确定接近度的距离计算方式。</param>
         public ClosestConnectionPointSelector(Distance distanceCalculation)
             => DistanceCalculation = distanceCalculation;
 

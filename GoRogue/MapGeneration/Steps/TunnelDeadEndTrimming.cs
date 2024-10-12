@@ -9,10 +9,10 @@ using ShaiRandom.Generators;
 
 namespace GoRogue.MapGeneration.Steps
 {
-    // TODO: Add adjacency rule support (3 walls assumes manhattan)
+    // TODO: 添加邻接规则支持（3面墙假设为曼哈顿距离）
     /// <summary>
-    /// Searches for tunnels that don't lead anywhere (eg. are surrounded by 3 walls), and removes them from the map.
-    /// Context Components Required:
+    /// 搜索不会通向任何地方的隧道（例如，被3面墙包围的），并从地图中删除它们。
+    /// 所需的上下文组件：
     /// <list type="table">
     ///     <listheader>
     ///         <term>Component</term>
@@ -29,62 +29,71 @@ namespace GoRogue.MapGeneration.Steps
     ///         <description>"WallFloor"</description>
     ///     </item>
     /// </list>
-    /// Context Components Added:
-    /// - None
+    /// 添加的上下文组件：
+    /// - 无
     /// </summary>
     /// <remarks>
-    /// This algorithm iterates over all map areas in the <see cref="ItemList{Area}" /> context component with the given tag.
-    /// For each area, it scans for dead ends
-    /// (locations that, according to the "WallFloor" component given, are surrounded by 3 walls).  For each dead end, if that
-    /// dead end is not currently
-    /// and hasn't previously been selected as "saved", based on percentage checks, it proceeds to fill it in.  It will remove
-    /// the dead end location, from the appropriate
-    /// area, and set the location in the "WallFloor" map to true.
-    /// It proceeds in this manner until either no more (non-saved) dead ends are found, or the given maximum iterations is
-    /// reached, then proceeds to the next area in the ItemList
-    /// until it has processed all of the areas.
+    /// 此算法会遍历带有给定标签的 <see cref="ItemList{Area}" /> 上下文组件中的所有地图区域。
+    /// 对于每个区域，它会扫描死胡同
+    /// （即根据给定的 “WallFloor” 组件，被 3 面墙包围的位置）。对于每个死胡同，如果它当前不是，
+    /// 并且之前也没有被选为“保存”的，基于百分比检查，算法会继续填充它。它会从相应的
+    /// 区域中移除死胡同位置，并将 “WallFloor” 地图中的该位置设置为 true。
+    /// 它以这种方式进行，直到找不到更多（未保存的）死胡同，或者达到给定的最大迭代次数，
+    /// 然后继续处理 ItemList 中的下一个区域，直到处理完所有区域。
     /// </remarks>
     [PublicAPI]
     public class TunnelDeadEndTrimming : GenerationStep
     {
         /// <summary>
-        /// Optional tag that must be associated with the component used to record areas representing tunnels that this algorithm
-        /// will trim dead ends from.
+        /// 可选的标签，必须与记录隧道区域的组件相关联，本算法将从这个区域中修剪死胡同。
         /// </summary>
         public readonly string? TunnelsComponentTag;
 
         /// <summary>
-        /// Optional tag that must be associated with the component used to set wall/floor status of tiles changed by this
-        /// algorithm.
+        /// 可选的标签，必须与用于设置由此算法更改的图块的墙壁/地板状态的组件相关联。
         /// </summary>
         public readonly string? WallFloorComponentTag;
 
         /// <summary>
-        /// Maximum number of passes to make looking for dead ends per area.  Defaults to infinity.
+        /// 每个区域寻找死胡同的最大遍历次数。默认为无穷大。
         /// </summary>
         public int MaxTrimIterations = -1;
 
         /// <summary>
-        /// RNG to use for percentage checks.  Defaults to <see cref="GlobalRandom.DefaultRNG" />.
+        /// 用于百分比检查的随机数生成器。默认为<see cref="GlobalRandom.DefaultRNG" />。
+        /// </summary>
+        public IEnhancedRandom RNG = GlobalRandom.DefaultRNG;
+        public readonly string? TunnelsComponentTag;
+
+        /// <summary>
+        /// 可选的标签，该标签必须与用于设置由本算法更改的图块的墙壁/地板状态的组件相关联。
+        /// </summary>
+        public readonly string? WallFloorComponentTag;
+
+        /// <summary>
+        /// 每个区域寻找死胡同的最大遍历次数。默认为无穷大。
+        /// </summary>
+        public int MaxTrimIterations = -1;
+
+        /// <summary>
+        /// 用于百分比检查的随机数生成器。默认为<see cref="GlobalRandom.DefaultRNG" />。
         /// </summary>
         public IEnhancedRandom RNG = GlobalRandom.DefaultRNG;
 
         /// <summary>
-        /// The chance out of 100 that a dead end is left alone.  Defaults to 40.
+        /// 死胡同被保留的百分比几率（100中的几率）。默认为40。
         /// </summary>
         public float SaveDeadEndChance = 40f;
 
         /// <summary>
-        /// Creates a new dead end trimming generation step.
+        /// 创建一个新的去除死胡同的生成步骤。
         /// </summary>
-        /// <param name="name">The name of the generation step.  Defaults to <see cref="TunnelDeadEndTrimming" />.</param>
+        /// <param name="name">生成步骤的名称。默认为<see cref="TunnelDeadEndTrimming" />。</param>
         /// <param name="wallFloorComponentTag">
-        /// Optional tag that must be associated with the component used to set wall/floor
-        /// status of tiles changed by this algorithm.  Defaults to "WallFloor".
+        /// 可选的标签，必须与用于设置由本算法更改的图块的墙壁/地板状态的组件相关联。默认为"WallFloor"。
         /// </param>
         /// <param name="tunnelsComponentTag">
-        /// Optional tag that must be associated with the component used to record areas
-        /// representing tunnels that this algorithm will trim dead ends from.  Defaults to "Tunnels".
+        /// 可选的标签，必须与用于记录代表隧道的区域的组件相关联，该算法将从这些隧道中修剪死胡同。默认为"Tunnels"。
         /// </param>
         public TunnelDeadEndTrimming(string? name = null, string? wallFloorComponentTag = "WallFloor",
                                      string? tunnelsComponentTag = "Tunnels")

@@ -4,8 +4,7 @@ using SadRogue.Primitives;
 namespace GoRogue.MapGeneration.ConnectionPointSelectors
 {
     /// <summary>
-    /// Implements a the selection algorithm that selects the center points of the bounding boxes of the given
-    /// <see cref="SadRogue.Primitives.Area" /> instances as connection points.
+    /// 实现了一种选择算法，该算法选择给定<see cref="SadRogue.Primitives.Area" />实例的边界框中心点作为连接点。
     /// </summary>
     [PublicAPI]
     public class CenterBoundsConnectionPointSelector : IConnectionPointSelector

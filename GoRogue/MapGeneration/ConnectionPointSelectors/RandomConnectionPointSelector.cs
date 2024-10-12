@@ -6,8 +6,7 @@ using ShaiRandom.Generators;
 namespace GoRogue.MapGeneration.ConnectionPointSelectors
 {
     /// <summary>
-    /// Implements a the selection algorithm that simply selects random points from the given
-    /// areas' positions lists, using the RNG specified, or the default rng if null is given.
+    /// 实现了一个选择算法，该算法简单地从给定区域的位置列表中随机选择点，使用指定的随机数生成器（RNG），如果给定null，则使用默认随机数生成器。
     /// </summary>
     [PublicAPI]
     public class RandomConnectionPointSelector : IConnectionPointSelector
@@ -15,9 +14,9 @@ namespace GoRogue.MapGeneration.ConnectionPointSelectors
         private readonly IEnhancedRandom _rng;
 
         /// <summary>
-        /// Constructor. Specifies the RNG to use, or null if the default RNG should be used.
+        /// 构造函数。指定要使用的随机数生成器（RNG），如果要使用默认RNG，则为null。
         /// </summary>
-        /// <param name="rng">The RNG to use, or null if the default RNG should be used.</param>
+        /// <param name="rng">要使用的随机数生成器（RNG），如果要使用默认RNG，则为null。</param>
         public RandomConnectionPointSelector(IEnhancedRandom? rng = null) => _rng = rng ?? GlobalRandom.DefaultRNG;
 
         /// <inheritdoc />
