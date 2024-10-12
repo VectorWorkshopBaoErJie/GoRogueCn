@@ -63,23 +63,7 @@ namespace GoRogue.MapGeneration.Steps
         /// 用于百分比检查的随机数生成器。默认为<see cref="GlobalRandom.DefaultRNG" />。
         /// </summary>
         public IEnhancedRandom RNG = GlobalRandom.DefaultRNG;
-        public readonly string? TunnelsComponentTag;
-
-        /// <summary>
-        /// 可选的标签，该标签必须与用于设置由本算法更改的图块的墙壁/地板状态的组件相关联。
-        /// </summary>
-        public readonly string? WallFloorComponentTag;
-
-        /// <summary>
-        /// 每个区域寻找死胡同的最大遍历次数。默认为无穷大。
-        /// </summary>
-        public int MaxTrimIterations = -1;
-
-        /// <summary>
-        /// 用于百分比检查的随机数生成器。默认为<see cref="GlobalRandom.DefaultRNG" />。
-        /// </summary>
-        public IEnhancedRandom RNG = GlobalRandom.DefaultRNG;
-
+ 
         /// <summary>
         /// 死胡同被保留的百分比几率（100中的几率）。默认为40。
         /// </summary>
